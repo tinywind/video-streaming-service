@@ -1,21 +1,41 @@
 package kr.tinywind.reactpracticeweb.controller;
 
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
-import org.springframework.stereotype.*;
-import org.springframework.web.bind.annotation.*;
+import kr.tinywind.reactpracticeweb.model.User;
+import kr.tinywind.reactpracticeweb.model.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+@SpringBootApplication
 @Controller
-@EnableAutoConfiguration
 public class SimpleController {
+    @Autowired
+    private UserRepository userRepository;
+
+    @RequestMapping("/add")
+    public User add(User hello) {
+        User user = userRepository.save(hello);
+        return user;
+    }
+
+    @RequestMapping("/list")
+    public Iterable<User> list(Model model) {
+        Iterable<User> userList = userRepository.findAll();
+        return userList;
+    }
 
     @RequestMapping("/")
     @ResponseBody
-    String home() {
-        return "Hello World!";
+    public String home() {
+        return "User World!";
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(SimpleController.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(SimpleController.class, args);
     }
 }
