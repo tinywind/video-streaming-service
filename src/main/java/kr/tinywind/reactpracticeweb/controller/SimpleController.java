@@ -18,12 +18,14 @@ public class SimpleController {
     private UserRepository userRepository;
 
     @RequestMapping("/add")
+    @ResponseBody
     public User add(User hello) {
         User user = userRepository.save(hello);
         return user;
     }
 
     @RequestMapping("/list")
+    @ResponseBody
     public Iterable<User> list(Model model) {
         Iterable<User> userList = userRepository.findAll();
         return userList;
