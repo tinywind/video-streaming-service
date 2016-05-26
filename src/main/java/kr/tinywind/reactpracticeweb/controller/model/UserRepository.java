@@ -1,4 +1,4 @@
-package kr.tinywind.reactpracticeweb.model;
+package kr.tinywind.reactpracticeweb.controller.model;
 
 import org.springframework.data.repository.CrudRepository;
 

@@ -1,7 +1,7 @@
 package kr.tinywind.reactpracticeweb.controller;
 
-import kr.tinywind.reactpracticeweb.model.User;
-import kr.tinywind.reactpracticeweb.model.UserRepository;
+import kr.tinywind.reactpracticeweb.controller.model.User;
+import kr.tinywind.reactpracticeweb.controller.model.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,5 +37,7 @@ public class SimpleController {
 
     public static void main(String[] args) throws Exception {
         ConfigurableApplicationContext context = SpringApplication.run(SimpleController.class, args);
+        UserRepository userRepository = context.getBean(UserRepository.class);
+
     }
 }
