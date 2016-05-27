@@ -18,3 +18,6 @@ spring:
   view:
     prefix: /WEB-INF/jsp/
     suffix: .jsp
+  data:
+    rest:
+      base-path: /api
