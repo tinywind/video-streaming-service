@@ -102,6 +102,7 @@ public class React {
                 final JarInputStream inputStream = new JarInputStream(new FileInputStream(classFile));
                 for (ZipEntry entry = inputStream.getNextEntry(); entry != null; entry = inputStream.getNextEntry()) {
                     if (entry.getName().replaceAll("[\\\\]", "/").matches("^.*/react-[^/]*[.][jJ][aA][rR]$")) {
+                        outputStream.reset();
                         for (int len; (len = inputStream.read(buffer)) >= 0; )
                             outputStream.write(buffer, 0, len);
                         byte[] bytes = outputStream.toByteArray();
