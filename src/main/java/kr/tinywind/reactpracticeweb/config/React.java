@@ -105,8 +105,7 @@ public class React {
                         outputStream.reset();
                         for (int len; (len = inputStream.read(buffer)) >= 0; )
                             outputStream.write(buffer, 0, len);
-                        byte[] bytes = outputStream.toByteArray();
-                        return getLoadingJsMap(new JarInputStream(new ByteArrayInputStream(bytes)), loadingJsList);
+                        return getLoadingJsMap(new JarInputStream(new ByteArrayInputStream(outputStream.toByteArray())), loadingJsList);
                     }
                 }
             }
