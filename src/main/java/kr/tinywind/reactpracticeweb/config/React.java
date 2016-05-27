@@ -68,10 +68,9 @@ public class React {
     }
 
     private Map<String, String> getLoadingJsMap(ZipInputStream jarFileInputStream, String[] loadingJsList) throws IOException {
-        final Map<String, String> loadingJsMap = Arrays.stream(loadingJsList).collect(Collectors.toMap(e -> e, e -> ""));
         final byte[] buffer = new byte[1000 * 1000];
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
+        final Map<String, String> loadingJsMap = Arrays.stream(loadingJsList).collect(Collectors.toMap(e -> e, e -> ""));
         for (ZipEntry entry = jarFileInputStream.getNextEntry(); entry != null; entry = jarFileInputStream.getNextEntry()) {
             if (entry.isDirectory())
                 continue;
@@ -91,18 +90,18 @@ public class React {
     }
 
     private Map<String, String> getLoadingJsMap(String... loadingJsList) throws IOException {
-        List<File> classList = Arrays.stream(System.getProperty("java.class.path").split(System.getProperty("path.separator"))).map(File::new).collect(Collectors.toList());
+        final byte[] buffer = new byte[1000 * 1000];
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final List<File> classList = Arrays.stream(System.getProperty("java.class.path").split(System.getProperty("path.separator"))).map(File::new).collect(Collectors.toList());
         classList.addAll(Arrays.stream(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs()).map(FileUtils::toFile).collect(Collectors.toList()));
-        classList = classList.stream().filter(e -> e != null && e.exists()).distinct().collect(Collectors.toList());
-        for (File classFile : classList) {
+        final List<File> finalClassList = classList.stream().filter(e -> e != null && e.exists()).distinct().collect(Collectors.toList());
+        for (File classFile : finalClassList) {
             if (classFile.getPath().replaceAll("[\\\\]", "/").matches("^.*/react-[^/]*[.][jJ][aA][rR]$"))
                 return getLoadingJsMap(new JarInputStream(new FileInputStream(classFile)), loadingJsList);
             if (classFile.getPath().matches("^.*[.][jJ][aA][rR]$")) {
                 final JarInputStream inputStream = new JarInputStream(new FileInputStream(classFile));
                 for (ZipEntry entry = inputStream.getNextEntry(); entry != null; entry = inputStream.getNextEntry()) {
                     if (entry.getName().replaceAll("[\\\\]", "/").matches("^.*/react-[^/]*[.][jJ][aA][rR]$")) {
-                        final byte[] buffer = new byte[1000 * 1000];
-                        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                         for (int len; (len = inputStream.read(buffer)) >= 0; )
                             outputStream.write(buffer, 0, len);
                         byte[] bytes = outputStream.toByteArray();
