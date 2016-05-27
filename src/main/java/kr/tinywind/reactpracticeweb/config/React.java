@@ -21,7 +21,7 @@ public class React {
     @PostConstruct
     private void init() throws IOException {
         try {
-            Map<String, String> loadingJsMap = getLoadingJsMap(new String[]{"react.min.js", "react-dom.min.js", "react-dom-server.min.js"});
+            Map<String, String> loadingJsMap = getLoadingJsMap("react.min.js", "react-dom.min.js", "react-dom-server.min.js");
             engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval("var window = this;");
             engine.eval(loadingJsMap.get("react.min.js"));
@@ -61,7 +61,7 @@ public class React {
         return new InputStreamReader(in);
     }
 
-    private Map<String, String> getLoadingJsMap(String[] loadingJsList) throws IOException {
+    private Map<String, String> getLoadingJsMap(String... loadingJsList) throws IOException {
         final Map<String, String> loadingJsMap = Arrays.stream(loadingJsList).collect(Collectors.toMap(e -> e, e -> ""));
         final String[] classPathList = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
         final byte[] buffer = new byte[1000 * 1000];
