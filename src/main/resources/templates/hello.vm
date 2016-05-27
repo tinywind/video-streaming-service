@@ -22,30 +22,33 @@
     Learn more about React at
     <a href="https://facebook.github.io/react" target="_blank">facebook.github.io/react</a>.
 </p>
-<script src="/react-15.1.0/react.min.js"></script>
-<script src="/react-15.1.0/react-dom.min.js"></script>
-<script>
-    var ExampleApplication = React.createClass({
-        render: function() {
-            var elapsed = Math.round(this.props.elapsed  / 100);
-            var seconds = elapsed / 10 + (elapsed % 10 ? '' : '.0' );
-            var message =
-                    'React has been successfully running for ' + seconds + ' seconds.';
 
-            return React.DOM.p(null, message);
-        }
-    });
+<div id="scripts">
+    <script src="/webjars/react/15.1.0/react.min.js"></script>
+    <script src="/webjars/react/15.1.0/react-dom.min.js"></script>
+    <script>
+        var ExampleApplication = React.createClass({
+            render: function () {
+                var elapsed = Math.round(this.props.elapsed / 100);
+                var seconds = elapsed / 10 + (elapsed % 10 ? '' : '.0' );
+                var message =
+                        'React has been successfully running for ' + seconds + ' seconds.';
 
-    // Call React.createFactory instead of directly call ExampleApplication({...}) in React.render
-    var ExampleApplicationFactory = React.createFactory(ExampleApplication);
+                return React.DOM.p(null, message);
+            }
+        });
 
-    var start = new Date().getTime();
-    setInterval(function() {
-        ReactDOM.render(
-                ExampleApplicationFactory({elapsed: new Date().getTime() - start}),
-                document.getElementById('container')
-        );
-    }, 50);
-</script>
+        // Call React.createFactory instead of directly call ExampleApplication({...}) in React.render
+        var ExampleApplicationFactory = React.createFactory(ExampleApplication);
+
+        var start = new Date().getTime();
+        setInterval(function () {
+            ReactDOM.render(
+                    ExampleApplicationFactory({elapsed: new Date().getTime() - start}),
+                    document.getElementById('container')
+            );
+        }, 50);
+    </script>
+</div>
 </body>
 </html>

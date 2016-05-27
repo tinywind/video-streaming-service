@@ -55,6 +55,13 @@
             <artifactId>lombok</artifactId>
             <version>1.12.2</version>
         </dependency>
+
+        <!-- FRONT -->
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>react</artifactId>
+            <version>15.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
