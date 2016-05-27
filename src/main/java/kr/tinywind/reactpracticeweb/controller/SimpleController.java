@@ -28,8 +28,8 @@ public class SimpleController {
     }
 
     @RequestMapping("/")
-    @ResponseBody
-    public String home() {
-        return "User World!";
+    public String home(Model model) {
+        model.addAttribute("name", "TINYWIND");
+        return "hello";
     }
 }

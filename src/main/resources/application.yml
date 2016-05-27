@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    database: H2
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+      naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console2
+  velocity:
+    resource-loader-path: classpath:/templates/
+#    jsp configuration: not using
+  view:
+    prefix: /WEB-INF/jsp/
+    suffix: .jsp
