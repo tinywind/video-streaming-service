@@ -6,22 +6,28 @@ import javax.annotation.PostConstruct;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.jar.JarInputStream;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Service
 public class React {
     private ScriptEngine engine;
 
     @PostConstruct
-    private void init() {
+    private void init() throws IOException {
         try {
+            Map<String, String> loadingJsMap = getLoadingJsMap(new String[]{"react.min.js", "react-dom.min.js", "react-dom-server.min.js"});
             engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval("var window = this;");
-            engine.eval(read("lib/react-15.1.0/react.min.js"));
-            engine.eval(read("lib/react-15.1.0/react-dom.min.js"));
-            engine.eval(read("lib/react-15.1.0/react-dom-server.min.js"));
+            engine.eval(loadingJsMap.get("react.min.js"));
+            engine.eval(loadingJsMap.get("react-dom.min.js"));
+            engine.eval(loadingJsMap.get("react-dom-server.min.js"));
+
             engine.eval(read("build/example.js"));
         } catch (ScriptException e) {
             throw new IllegalStateException("could not init nashorn", e);
@@ -53,5 +59,33 @@ public class React {
     private Reader read(String path) {
         InputStream in = getClass().getClassLoader().getResourceAsStream(path);
         return new InputStreamReader(in);
+    }
+
+    private Map<String, String> getLoadingJsMap(String[] loadingJsList) throws IOException {
+        final Map<String, String> loadingJsMap = Arrays.stream(loadingJsList).collect(Collectors.toMap(e -> e, e -> ""));
+        final String[] classPathList = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+        final byte[] buffer = new byte[1000 * 1000];
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for (String classPath : classPathList) {
+            if (classPath.replaceAll("[\\\\]", "/").matches("^.*/react[^/]*[.][jJ][aA][rR]$")) {
+                final ZipInputStream inputStream = new JarInputStream(new FileInputStream(classPath));
+                for (ZipEntry entry = inputStream.getNextEntry(); entry != null; entry = inputStream.getNextEntry()) {
+                    if (entry.isDirectory())
+                        continue;
+                    final String entryName = entry.getName().replaceAll("[\\\\]", "/");
+                    final int lastSeparator = entryName.lastIndexOf("/");
+                    final String entryFileName = entryName.substring(lastSeparator >= 0 ? lastSeparator + 1 : 0);
+                    final String entryContent = loadingJsMap.get(entryFileName);
+                    if (entryContent == null || entryContent.length() > 0)
+                        continue;
+                    outputStream.reset();
+                    for (int len; (len = inputStream.read(buffer)) >= 0; )
+                        outputStream.write(buffer, 0, len);
+                    loadingJsMap.put(entryFileName, new String(outputStream.toByteArray()));
+                }
+                break;
+            }
+        }
+        return loadingJsMap;
     }
 }
