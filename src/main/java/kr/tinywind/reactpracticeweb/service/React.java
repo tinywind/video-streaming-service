@@ -1,4 +1,4 @@
-package kr.tinywind.reactpracticeweb.config;
+package kr.tinywind.reactpracticeweb.service;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -27,21 +27,21 @@ public class React {
     @PostConstruct
     private void init() throws IOException {
         try {
-            logger.debug("init START");
+            logger.trace("init START");
             final String reactJsFile = "react.min.js";
             final String reactDomJsFile = "react-dom.min.js";
             final String reactDomServerJsFile = "react-dom-server.min.js";
             final Map<String, String> loadingJsMap = getLoadingJsMap(reactJsFile, reactDomJsFile, reactDomServerJsFile);
             assert loadingJsMap != null;
-            logger.debug("end read Js resource files");
+            logger.trace("end read Js resource files");
             engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval("var window = this;");
             engine.eval(loadingJsMap.get(reactJsFile));
             engine.eval(loadingJsMap.get(reactDomJsFile));
             engine.eval(loadingJsMap.get(reactDomServerJsFile));
             engine.eval(read("build/example.js"));
-            logger.debug("end eval Js");
-            logger.debug("init END");
+            logger.trace("end eval Js");
+            logger.trace("init END");
         } catch (ScriptException e) {
             throw new IllegalStateException("could not init nashorn", e);
         }
@@ -102,12 +102,12 @@ public class React {
         classList.addAll(Arrays.stream(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs()).map(FileUtils::toFile).collect(Collectors.toList()));
         final List<File> finalClassList = classList.stream().filter(e -> e != null && e.exists()).distinct().collect(Collectors.toList());
         for (File classFile : finalClassList) {
-            if (classFile.getPath().replaceAll("[\\\\]", "/").matches("^.*/react-[^/]*[.][jJ][aA][rR]$"))
+            if (classFile.getPath().replaceAll("[\\\\]", "/").matches("^(.*/)?react-[^/]*[.][jJ][aA][rR]$"))
                 return getLoadingJsMap(new JarInputStream(new FileInputStream(classFile)), loadingJsList);
             if (classFile.getPath().matches("^.*[.][jJ][aA][rR]$")) {
                 final JarInputStream inputStream = new JarInputStream(new FileInputStream(classFile));
                 for (ZipEntry entry = inputStream.getNextEntry(); entry != null; entry = inputStream.getNextEntry()) {
-                    if (entry.getName().replaceAll("[\\\\]", "/").matches("^.*/react-[^/]*[.][jJ][aA][rR]$")) {
+                    if (entry.getName().replaceAll("[\\\\]", "/").matches("^(.*/)?react-[^/]*[.][jJ][aA][rR]$")) {
                         outputStream.reset();
                         for (int len; (len = inputStream.read(buffer)) >= 0; )
                             outputStream.write(buffer, 0, len);

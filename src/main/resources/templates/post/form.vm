@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="/webjars/bootstrap/3.3.4/dist/css/bootstrap.min.css">
+
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html {
+            border-top: 10px #1abf89 solid;
+        }
+
+        body {
+            width: 750px;
+            margin: 0 auto;
+            padding: 7% 20px 20px;
+        }
+
+        @media all and (max-width: 1024px) {
+            body, pre a {
+                width: 85%;
+            }
+        }
+
+        small {
+            color: #999;
+        }
+
+        #toolbar {
+            margin-bottom: 1em;
+            position: fixed;
+            left: 20px;
+            margin-top: 5px;
+        }
+
+        #toolbar [class^="icon-"]:before, #toolbar [class*=" icon-"]:before {
+            font-family: 'pen'
+        }
+
+        #back {
+            color: #1abf89;
+            cursor: pointer;
+        }
+
+        #hinted {
+            color: #1abf89;
+            cursor: pointer;
+        }
+
+        #hinted.disabled {
+            color: #666;
+        }
+
+        #hinted:before {
+            content: '\e816';
+        }
+    </style>
+
+    <link rel="stylesheet" href="/webjars/pen/0.2.2/src/pen.css"/>
+    <link rel="stylesheet" href="/webjars/origoni-startbootstrap-clean-blog/1.0.3/css/clean-blog.min.css">
+
+    <style type="text/css">
+        .pen-icon {
+            padding: 0 9.3px;
+        }
+
+        .pen-menu {
+            opacity: 0.8;
+            border: -1px;
+            height: 37px;
+        }
+
+        .pen-menu:after {
+            display: none;
+        }
+
+        .pen p {
+            font-family: Lora, 'Times New Roman', serif;
+            font-size: 20px;
+            color: #404040;
+        }
+
+        .pen h1, h2, h3, h4, h5, h6 {
+            font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 800;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            line-height: 1.1;
+        }
+
+        .pen h1 {
+            font-size: 36px;
+        }
+
+        .pen h2 {
+            font-size: 30px;
+        }
+
+        .pen h3 {
+            font-size: 24px;
+        }
+
+        .pen h4 {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="toolbar">
+    <span id="back" class="icon-back" onclick="history.back();">돌아가기</span><br>
+    <span id="hinted" class="icon-pre disabled" title="Toggle Markdown Hints"></span>
+</div>
+
+<div id="custom-toolbar" class="pen-menu pen-menu" style="display: block; top: 20px; margin:0 auto;">
+    <i class="pen-icon icon-insertimage" data-action="insertimage"></i>
+    <i class="pen-icon icon-blockquote" data-action="blockquote"></i>
+    <i class="pen-icon icon-h1" data-action="h1"></i>
+    <i class="pen-icon icon-h2" data-action="h2"></i>
+    <i class="pen-icon icon-h3" data-action="h3"></i>
+    <i class="pen-icon icon-p active" data-action="p"></i>
+    <i class="pen-icon icon-code" data-action="code"></i>
+    <i class="pen-icon icon-insertorderedlist" data-action="insertorderedlist"></i>
+    <i class="pen-icon icon-insertunorderedlist" data-action="insertunorderedlist"></i>
+    <i class="pen-icon icon-inserthorizontalrule" data-action="inserthorizontalrule"></i>
+    <i class="pen-icon icon-indent" data-action="indent"></i>
+    <i class="pen-icon icon-outdent" data-action="outdent"></i>
+    <i class="pen-icon icon-bold" data-action="bold"></i>
+    <i class="pen-icon icon-italic" data-action="italic"></i>
+    <i class="pen-icon icon-underline" data-action="underline"></i>
+    <i class="pen-icon icon-createlink" data-action="createlink"></i>
+</div>
+
+<form action="/post/write" method="post" onsubmit="$('#content').val($('#pen').html()); pen.destroy();">
+    <input type="text" name="title" placeholder="title"
+           style="height: 70px; width: 100%; font-size: 55px;
+			border: none; border-right: 0px; border-top: 0px; boder-left: 0px; boder-bottom: 1px; outline-style: none;
+			font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 800;">
+
+    <input type="text" name="subtitle" placeholder="Subtitle (option)"
+           style="height: 60px; width: 100%; font-size: 24px;
+			border: none; border-right: 0px; border-top: 0px; boder-left: 0px; boder-bottom: 1px; outline-style: none;
+			font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 600;"/>
+
+    <input type="hidden" name="content" id="content">
+
+    <hr style="margin-top: 2px; border-top: 1px solid #999;">
+
+    <div data-toggle="pen" data-placeholder="Content" id="pen" style="min-height: 200px;"></div>
+    <button type="submit" class="btn btn-primary btn-lg btn-block">저장</button>
+</form>
+<hr>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="#">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Your Website 2014</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div id="scripts">
+    <script src="/webjars/jquery/2.2.4/dist/jquery.min.js"></script>
+    <script src="/webjars/pen/0.2.2/src/pen.js"></script>
+    <script src="/webjars/pen/0.2.2/src/markdown.js"></script>
+    <script type="text/javascript">
+        var pen = new Pen({
+            toolbar: document.getElementById('custom-toolbar'),
+            editor: document.querySelector('[data-toggle="pen"]')
+        });
+        pen.focus();
+        $('#hinted').click(function () {
+            var pen = $('.pen')
+            if (pen.hasClass('hinted')) {
+                pen.removeClass('hinted');
+                $(this).addClass('disabled');
+            } else {
+                pen.addClass('hinted');
+                $(this).removeClass('disabled');
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

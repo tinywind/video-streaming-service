@@ -3,28 +3,34 @@ spring:
     database: H2
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
       naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
     properties:
       hibernate:
         globally_quoted_identifiers: true
+# Auto configuration
+#  datasource:
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    username: sa
+#    password:
+#    driverClassName: org.h2.Driver
   h2:
     console:
       enabled: true
-      path: /h2-console2
+      path: /h2-console
   velocity:
     resource-loader-path: classpath:/templates/
 # jsp configuration: not using
-  view:
-    prefix: /WEB-INF/jsp/
-    suffix: .jsp
+#  view:
+#    prefix: /WEB-INF/jsp/
+#    suffix: .jsp
   data:
     rest:
       base-path: /api
 logging:
 # for console logging
   level:
-    kr.tinywind.reactpracticeweb: DEBUG
+    kr.tinywind.reactpracticeweb: TRACE
     org.springframework: INFO
     org.apache.velocity: INFO
     org.hibernate: INFO

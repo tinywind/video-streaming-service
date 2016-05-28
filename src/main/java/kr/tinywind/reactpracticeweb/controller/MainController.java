@@ -1,6 +1,6 @@
 package kr.tinywind.reactpracticeweb.controller;
 
-import kr.tinywind.reactpracticeweb.config.React;
+import kr.tinywind.reactpracticeweb.service.React;
 import kr.tinywind.reactpracticeweb.model.User;
 import kr.tinywind.reactpracticeweb.model.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.script.ScriptException;
 
 @Controller
-public class SimpleController {
+public class MainController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -32,9 +32,14 @@ public class SimpleController {
         return userList;
     }
 
-    @RequestMapping("/")
-    public String home(Model model) throws ScriptException {
+    @RequestMapping("/react-server-side-test")
+    public String reactServerSideTestPage(Model model) throws ScriptException {
         model.addAttribute("content", react.render("CommentBox", "url", "/", "pollInterval", "5000"));
-        return "hello";
+        return "react-server-side-test";
+    }
+
+    @RequestMapping("/")
+    public String homePage(Model model) {
+        return "home";
     }
 }
