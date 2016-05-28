@@ -138,7 +138,7 @@
     <i class="pen-icon icon-createlink" data-action="createlink"></i>
 </div>
 
-<form action="/post/write" method="post" onsubmit="$('#content').val($('#pen').html()); pen.destroy();">
+<form action="/post/write" method="post" onsubmit="$('#content').val($('#pen').html()); pen.destroy()">
     <input type="text" name="title" placeholder="title"
            style="height: 70px; width: 100%; font-size: 55px;
 			border: none; border-right: 0px; border-top: 0px; boder-left: 0px; boder-bottom: 1px; outline-style: none;
@@ -196,7 +196,7 @@
 </footer>
 
 <div id="scripts">
-    <script src="/webjars/jquery/2.2.4/dist/jquery.min.js"></script>
+    <script src="/webjars/jquery/3.0.0-rc1/dist/jquery.min.js"></script>
     <script src="/webjars/pen/0.2.2/src/pen.js"></script>
     <script src="/webjars/pen/0.2.2/src/markdown.js"></script>
     <script type="text/javascript">

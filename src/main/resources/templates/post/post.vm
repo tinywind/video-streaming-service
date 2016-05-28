@@ -115,7 +115,7 @@
 </footer>
 
 <div id="scripts">
-    <script src="/webjars/jquery/2.2.4/dist/jquery.min.js"></script>
+    <script src="/webjars/jquery/3.0.0-rc1/dist/jquery.min.js"></script>
     <script src="/webjars/origoni-startbootstrap-clean-blog/1.0.3/js/clean-blog.min.js"></script>
 </div>
 </body>
