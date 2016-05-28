@@ -14,10 +14,20 @@ spring:
       path: /h2-console2
   velocity:
     resource-loader-path: classpath:/templates/
-#    jsp configuration: not using
+# jsp configuration: not using
   view:
     prefix: /WEB-INF/jsp/
     suffix: .jsp
   data:
     rest:
       base-path: /api
+logging:
+# for console logging
+  level:
+    kr.tinywind.reactpracticeweb: DEBUG
+    org.springframework: INFO
+    org.apache.velocity: INFO
+    org.hibernate: INFO
+    org.h2: INFO
+# for file logging
+  config: classpath:logback-spring.xml

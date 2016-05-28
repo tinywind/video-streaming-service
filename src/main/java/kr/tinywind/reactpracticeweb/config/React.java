@@ -1,6 +1,8 @@
 package kr.tinywind.reactpracticeweb.config;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -20,22 +22,26 @@ import java.util.zip.ZipInputStream;
 @Service
 public class React {
     private ScriptEngine engine;
+    private static Logger logger = LoggerFactory.getLogger(React.class);
 
     @PostConstruct
     private void init() throws IOException {
         try {
+            logger.debug("init START");
             final String reactJsFile = "react.min.js";
             final String reactDomJsFile = "react-dom.min.js";
             final String reactDomServerJsFile = "react-dom-server.min.js";
             final Map<String, String> loadingJsMap = getLoadingJsMap(reactJsFile, reactDomJsFile, reactDomServerJsFile);
             assert loadingJsMap != null;
-
+            logger.debug("end read Js resource files");
             engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval("var window = this;");
             engine.eval(loadingJsMap.get(reactJsFile));
             engine.eval(loadingJsMap.get(reactDomJsFile));
             engine.eval(loadingJsMap.get(reactDomServerJsFile));
             engine.eval(read("build/example.js"));
+            logger.debug("end eval Js");
+            logger.debug("init END");
         } catch (ScriptException e) {
             throw new IllegalStateException("could not init nashorn", e);
         }
