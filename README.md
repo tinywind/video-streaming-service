@@ -7,8 +7,11 @@ Using Framework/Tools
 * h2 database
 * velocity
 * react js
+* lombok
 
-References:
+**If fail compile on any IDE, you check the IDE support _lombok_.** 
+
+References
 * http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle
 * https://facebook.github.io/react/docs/getting-started.html
 * http://velocity.apache.org/engine/releases/velocity-1.5/user-guide.html
