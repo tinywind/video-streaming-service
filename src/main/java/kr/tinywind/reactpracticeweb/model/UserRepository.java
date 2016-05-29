@@ -1,10 +1,10 @@
 package kr.tinywind.reactpracticeweb.model;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByFirstName(String firstName);
 
     List<User> findByLastName(String lastName);

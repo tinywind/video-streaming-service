@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class DatabaseLoader implements CommandLineRunner {
-    private static Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
+public class PostInitActionConfig implements CommandLineRunner {
+    private static Logger logger = LoggerFactory.getLogger(PostInitActionConfig.class);
 
     @Autowired
     private UserRepository userRepository;

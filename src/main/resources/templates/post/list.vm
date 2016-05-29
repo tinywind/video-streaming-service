@@ -84,9 +84,18 @@
 
             <!-- Pager -->
             <ul class="pager">
-                <li class="next">
-                    <a href="#">Older Posts &rarr;</a>
-                </li>
+                #if(!${posts.first})
+                    <li class="previous">
+                        #set( $number = ${posts.number} - 1 )
+                        <a href="?page=${number}">&larr; Newer Posts</a>
+                    </li>
+                #end
+                #if(!${posts.last})
+                    <li class="next">
+                        #set( $number = ${posts.number} + 1 )
+                        <a href="?page=${number}">Older Posts &rarr;</a>
+                    </li>
+                #end
             </ul>
         </div>
     </div>
