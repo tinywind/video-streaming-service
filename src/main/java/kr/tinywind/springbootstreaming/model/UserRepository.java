@@ -1,4 +1,4 @@
-package kr.tinywind.reactpracticeweb.model;
+package kr.tinywind.springbootstreaming.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

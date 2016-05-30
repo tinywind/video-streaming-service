@@ -1,6 +1,6 @@
-package kr.tinywind.reactpracticeweb.model;
+package kr.tinywind.springbootstreaming.model;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -9,25 +9,27 @@ import java.util.Date;
 
 @Entity
 @Data
-public class Post {
+@NoArgsConstructor
+@RequiredArgsConstructor
+@AllArgsConstructor
+public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Size(min = 1, max = 255)
     @Column(nullable = false)
-    private String title;
+    @NonNull
+    private String firstName;
 
     @Size(max = 255)
-    private String subtitle;
-
-    @Size(min = 1, max = 100000000)
-    @Column(length = 100000000, nullable = false)
-    private String content;
+    @NonNull
+    private String lastName;
 
     @Basic(optional = false)
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @NonNull
     private Date createdAt;
 }

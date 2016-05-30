@@ -1,4 +1,4 @@
-package kr.tinywind.reactpracticeweb.config;
+package kr.tinywind.springbootstreaming.config;
 
 import org.h2.server.web.WebServlet;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;

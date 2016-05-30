@@ -1,4 +1,4 @@
-package kr.tinywind.reactpracticeweb;
+package kr.tinywind.springbootstreaming;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

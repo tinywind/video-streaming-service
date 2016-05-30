@@ -1,8 +1,7 @@
-package kr.tinywind.reactpracticeweb.config;
+package kr.tinywind.springbootstreaming.config;
 
-import kr.tinywind.reactpracticeweb.model.Post;
-import kr.tinywind.reactpracticeweb.model.PostRepository;
-import kr.tinywind.reactpracticeweb.model.UserRepository;
+import kr.tinywind.springbootstreaming.model.User;
+import kr.tinywind.springbootstreaming.model.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +17,9 @@ public class PostInitActionConfig implements CommandLineRunner {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PostRepository postRepository;
-
     @Override
     public void run(String... strings) throws Exception {
-        Post post = new Post();
-        post.setTitle("Title");
-        post.setSubtitle("Subtitle");
-        post.setContent("Content");
-        post.setCreatedAt(new Date());
-        Post saved = postRepository.save(post);
+        User saved = userRepository.save(new User("Jeon", "JaeHyeong", new Date()));
         logger.debug(saved.toString());
     }
 }

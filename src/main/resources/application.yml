@@ -1,39 +1,31 @@
 spring:
-  jpa:
-    database: H2
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    properties:
-      hibernate:
-        globally_quoted_identifiers: true
-# Auto configuration
-#  datasource:
-#    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-#    username: sa
-#    password:
-#    driverClassName: org.h2.Driver
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  velocity:
-    resource-loader-path: classpath:/templates/
-# jsp configuration: not using
-#  view:
-#    prefix: /WEB-INF/jsp/
-#    suffix: .jsp
-  data:
-    rest:
-      base-path: /api
+    mvc:
+        view:
+            prefix: /WEB-INF/jsp/
+            suffix: .jsp
+    jpa:
+        generate-ddl: true
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+    h2:
+        console:
+            enabled: true
+    datasource:
+        url: jdbc:h2:file:./spring-boot-streaming
+    jackson:
+        date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+        time-zone: Asia/Seoul
+#        deserialization:
+#            unwrap-root-value: true
+#        serialization:
+#            wrap-root-value: true
+
 logging:
-# for console logging
-  level:
-    kr.tinywind.reactpracticeweb: TRACE
-    org.springframework: INFO
-    org.apache.velocity: INFO
-    org.hibernate: INFO
-    org.h2: INFO
-# for file logging
-  config: classpath:logback-spring.xml
+    level:
+        com.millky.blog: DEBUG
+
+server:
+    error:
+        whitelabel:
+            enabled: false
