@@ -27,7 +27,12 @@ public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
     private static final String FOLDER_PATH = "D:\\Music\\Music Video\\Mike Tompkins\\";
 
-    @RequestMapping(value = {"", "list"})
+    @RequestMapping(value = {"", "show"})
+    public String show() {
+        return "show";
+    }
+
+    @RequestMapping("list")
     @ResponseBody
     public List<FileItem> list(@RequestParam(required = false) String path) {
         final List<FileItem> list = new ArrayList<>();
@@ -44,20 +49,20 @@ public class MainController {
         return list;
     }
 
-    @RequestMapping("download/{file}")
-    public ResponseEntity<InputStreamResource> download(@PathVariable("file") String file, HttpServletRequest request)
+    @RequestMapping("video/{path}")
+    public ResponseEntity<InputStreamResource> video(@PathVariable("path") String path, HttpServletRequest request)
             throws UnsupportedEncodingException, FileNotFoundException {
-        final String decodeString = URLDecoder.decode(file, "UTF-8");
-        File f = new File(FOLDER_PATH + decodeString);
-        if (!f.exists())
-            f = new File(FOLDER_PATH + request.getRequestURI().substring("/download/".length()));
-        if (!f.exists())
-            f = new File(FOLDER_PATH + file + ".mp4");
-        logger.info("DOWNLOAD " + f.getAbsolutePath());
+        final String decodeString = URLDecoder.decode(path, "UTF-8");
+        File file = new File(FOLDER_PATH + decodeString);
+        if (!file.exists())
+            file = new File(FOLDER_PATH + request.getRequestURI().substring("/video/".length()));
+        if (!file.exists())
+            file = new File(FOLDER_PATH + path + ".mp4");
+        logger.info("DOWNLOAD " + file.getAbsolutePath());
         final HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-disposition", "attachment; filename=" + decodeString);
+        headers.add("Content-disposition", "attachment; filename=\"" + file.getName() + "\"");
         return ResponseEntity.ok().headers(headers).contentLength(file.length())
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new InputStreamResource(new FileInputStream(f)));
+                .body(new InputStreamResource(new FileInputStream(file)));
     }
 }
