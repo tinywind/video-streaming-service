@@ -21,8 +21,8 @@
 <div id="fileList"></div>
 <div>
     <video id="player" controls="controls" autoplay="autoplay" poster="http://placehold.it/640x360" width="640"
-           <%--height="400"--%> <%--loop="loop"--%> <%--muted="muted"--%>
-           src="/video/Mike%20Tompkins%20-%20Dynamite%20-%20Taio%20Cruz%20-%20A%20Cappella%20Cover%20-%20Just%20Voice%20and%20Mouth.mp4">
+           src="/video2/Mike%20Tompkins%20-%20Dynamite%20-%20Taio%20Cruz%20-%20A%20Cappella%20Cover%20-%20Just%20Voice%20and%20Mouth.mp4"
+           <%--height="400"--%> <%--loop="loop"--%> <%--muted="muted"--%>>
     </video>
 </div>
 
@@ -59,8 +59,7 @@
                         text: data[i].fileName,
                         click: function () {
                             console.log($(this).text());
-                            player.attr('src', '/video/' + $(this).text());
-//                            player.attr('src', 'http://techslides.com/demos/sample-videos/small.mp4');
+                            player.attr('src', '/video2/' + $(this).text());
                         }
                     }));
                 }

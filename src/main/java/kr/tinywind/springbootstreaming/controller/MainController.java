@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -22,10 +23,11 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kr.tinywind.springbootstreaming.config.StreamView.FOLDER_PATH;
+
 @Controller
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
-    private static final String FOLDER_PATH = "D:\\Music\\Music Video\\Mike Tompkins\\";
 
     @RequestMapping(value = {"", "show"})
     public String show() {
@@ -49,15 +51,16 @@ public class MainController {
         return list;
     }
 
-    @RequestMapping("video/{path}")
+    @RequestMapping("video2/{path}/**")
+    public ModelAndView video2(@PathVariable("path") String path) {
+        return new ModelAndView("streamView", "movieName", path);
+    }
+
+    @RequestMapping("video/{path}/**")
     public ResponseEntity<InputStreamResource> video(@PathVariable("path") String path, HttpServletRequest request)
             throws UnsupportedEncodingException, FileNotFoundException {
         final String decodeString = URLDecoder.decode(path, "UTF-8");
         File file = new File(FOLDER_PATH + decodeString);
-        if (!file.exists())
-            file = new File(FOLDER_PATH + request.getRequestURI().substring("/video/".length()));
-        if (!file.exists())
-            file = new File(FOLDER_PATH + path + ".mp4");
         logger.info("DOWNLOAD " + file.getAbsolutePath());
         final HttpHeaders headers = new HttpHeaders();
         headers.add("Content-disposition", "attachment; filename=\"" + file.getName() + "\"");
