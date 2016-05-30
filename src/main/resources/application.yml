@@ -22,8 +22,11 @@ spring:
 #            wrap-root-value: true
 
 logging:
-    level:
-        com.millky.blog: DEBUG
+  level:
+      kr.tinywind: TRACE
+      org.springframework: INFO
+      org.hibernate: INFO
+      org.h2: INFO
 
 server:
     error:
