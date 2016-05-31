@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Component("streamView")
 public class StreamView extends AbstractView {
-    public static final String FOLDER_PATH = "D:\\Music\\Music Video\\Mike Tompkins\\"; //동영상 파일이 저장된 디렉토리 경로
+    public static final String FOLDER_PATH = "~/spring-boot-streaming/src/main/java/kr"; //동영상 파일이 저장된 디렉토리 경로
     private static final Logger logger = LoggerFactory.getLogger(StreamView.class);
 
     @Override
