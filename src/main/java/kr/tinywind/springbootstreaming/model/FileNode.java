@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class FileItem {
+public class FileNode {
     private String fileName;
     private boolean isFIle;
 }

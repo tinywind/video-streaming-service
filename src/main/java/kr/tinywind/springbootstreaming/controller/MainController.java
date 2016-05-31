@@ -1,6 +1,6 @@
 package kr.tinywind.springbootstreaming.controller;
 
-import kr.tinywind.springbootstreaming.model.FileItem;
+import kr.tinywind.springbootstreaming.model.FileNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -36,14 +36,14 @@ public class MainController {
 
     @RequestMapping("list")
     @ResponseBody
-    public List<FileItem> list(@RequestParam(required = false) String path) {
-        final List<FileItem> list = new ArrayList<>();
+    public List<FileNode> list(@RequestParam(required = false) String path) {
+        final List<FileNode> list = new ArrayList<>();
         final String filePath = FOLDER_PATH + (path == null ? "" : "" + path);
         try {
             final File directory = new File(filePath);
             final File[] files = directory.listFiles();
             for (File file : files)
-                list.add(new FileItem(file.getName(), file.getName().contains(".mp4")));
+                list.add(new FileNode(file.getName(), file.getName().contains(".mp4")));
         } catch (Exception e) {
             logger.error("ERROR DURING FOR LOOP");
         }
