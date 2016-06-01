@@ -21,18 +21,41 @@
 <div id="fileList"></div>
 <div>
     <video id="player" controls="controls" autoplay="autoplay" poster="http://placehold.it/640x360" width="640"
-    <%--height="400"--%> <%--loop="loop"--%> <%--muted="muted"--%>>
+    <%--height="400"--%> loop="loop" <%--muted="muted"--%>>
     </video>
+</div>
+
+<div>
+    <a id="helpLink" href="#help">설명보기</a>
+</div>
+
+<div id="help" style="display: none; padding: 2em; background: white; width: 30em; border-radius: 5px;">
+    <h2>사용방법 (전부 아직 미구현)</h2>
+    <div>방향키 왼쪽: 5초 전으로</div>
+    <div>방향키 오른쪽: 5초 앞으로</div>
+    <div>Space bar: 비디오 재생/중지</div>
+    <div>Q: 시선 좌측 상단</div>
+    <div>W: 시선 상단</div>
+    <div>E: 시선 좌측 상단</div>
+    <div>A: 시선 좌측</div>
+    <div>S: 시선 가운데</div>
+    <div>D: 시선 우측</div>
+    <div>Z: 시선 좌측 하단</div>
+    <div>X: 시선 하단</div>
+    <div>C: 시선 우측 하단</div>
 </div>
 
 <div id="scripts">
     <script type="text/javascript" src="<c:url value="/webjars/jquery/2.1.4/dist/jquery.min.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/!resources/library/jquery.blockUI-2.70.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/!resources/js/jquery.leanModal-1.1.replace.js"/>"></script>
     <script type="text/javascript">
         var currentPath = "";
         var pathInfo = $("#pathInfo");
         var fileList = $("#fileList");
         var player = $("#player");
+        var helpLink = $("#helpLink");
+        var help = $("#help");
 
         function ajaxData(url, data) {
             var deferred = $.Deferred();
@@ -104,6 +127,7 @@
         }
 
         $(window).load(function () {
+            helpLink.leanModal({closeButton: ".lean-overlay"});
             loadDirFiles();
         });
     </script>
