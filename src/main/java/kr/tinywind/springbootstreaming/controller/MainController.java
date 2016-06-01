@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,7 +22,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kr.tinywind.springbootstreaming.config.StreamView.FOLDER_PATH;
+import static kr.tinywind.springbootstreaming.config.Constants.VIDEO_ROOT_DIR_PATH;
 
 @Controller
 public class MainController {
@@ -38,14 +37,16 @@ public class MainController {
     @ResponseBody
     public List<FileNode> list(@RequestParam(required = false) String path) {
         final List<FileNode> list = new ArrayList<>();
-        final String filePath = FOLDER_PATH + (path == null ? "" : "" + path);
+        final String filePath = VIDEO_ROOT_DIR_PATH + (path == null ? "" : "" + path);
         try {
             final File directory = new File(filePath);
             final File[] files = directory.listFiles();
             for (File file : files)
                 list.add(new FileNode(file.getName(), file.getName().contains(".mp4")));
         } catch (Exception e) {
-            logger.error("ERROR DURING FOR LOOP");
+            logger.error("ERROR DURING FOR LOOP: " + e.getMessage());
+            if (e.getCause() != null)
+                logger.error("ERROR DURING FOR LOOP: " + e.getCause().getMessage());
         }
         logger.info("File List Request. List size is " + list.size());
         return list;
@@ -57,10 +58,10 @@ public class MainController {
     }
 
     @RequestMapping("video/{path}/**")
-    public ResponseEntity<InputStreamResource> video(@PathVariable("path") String path, HttpServletRequest request)
+    public ResponseEntity<InputStreamResource> video(@PathVariable("path") String path)
             throws UnsupportedEncodingException, FileNotFoundException {
         final String decodeString = URLDecoder.decode(path, "UTF-8");
-        File file = new File(FOLDER_PATH + decodeString);
+        File file = new File(VIDEO_ROOT_DIR_PATH + decodeString);
         logger.info("DOWNLOAD " + file.getAbsolutePath());
         final HttpHeaders headers = new HttpHeaders();
         headers.add("Content-disposition", "attachment; filename=\"" + file.getName() + "\"");
