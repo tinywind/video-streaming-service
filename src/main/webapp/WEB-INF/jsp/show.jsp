@@ -16,19 +16,23 @@
     </style>
 </head>
 <body>
-<h2>Streaming Show</h2>
+<h2>Streaming Show ( <span id="pathInfo"></span> )</h2>
 
 <div id="fileList"></div>
 <div>
     <video id="player" controls="controls" autoplay="autoplay" poster="http://placehold.it/640x360" width="640"
-           src="/video2/Mike%20Tompkins%20-%20Dynamite%20-%20Taio%20Cruz%20-%20A%20Cappella%20Cover%20-%20Just%20Voice%20and%20Mouth.mp4"
-           <%--height="400"--%> <%--loop="loop"--%> <%--muted="muted"--%>>
+    <%--height="400"--%> <%--loop="loop"--%> <%--muted="muted"--%>>
     </video>
 </div>
 
 <div id="scripts">
     <script type="text/javascript" src="<c:url value="/webjars/jquery/2.1.4/dist/jquery.min.js"/>"></script>
     <script type="text/javascript">
+        var currentPath = "";
+        var pathInfo = $("#pathInfo");
+        var fileList = $("#fileList");
+        var player = $("#player");
+
         function ajaxData(url, data) {
             var deferred = $.Deferred();
             console.log(url);
@@ -49,23 +53,54 @@
             return deferred.promise();
         }
 
-        $(window).load(function () {
-            var fileList = $("#fileList");
-            var player = $("#player");
-            ajaxData("/list").done(function (data) {
+        function loadDirFiles(path) {
+            if (path == null)
+                path = "";
+            ajaxData("/list/" + path).done(function (data) {
+                fileList.empty();
+                currentPath = path;
+                pathInfo.text(currentPath);
+                fileList.append($("<div/>", {
+                    'class': 'video-link',
+                    text: "<<이전 디렉토리로 이동>>",
+                    click: function () {
+                        if (currentPath == "" || currentPath == "/") {
+                            loadDirFiles();
+                            return;
+                        }
+
+                        var lastIndex = currentPath.lastIndexOf("/");
+                        if (lastIndex == currentPath.length - 1)
+                            lastIndex = currentPath.substr(0, currentPath.length - 1).lastIndexOf("/");
+                        console.log(currentPath.substr(0, lastIndex));
+                        loadDirFiles(currentPath.substr(0, lastIndex));
+                    }
+                }));
                 for (var i = 0; i < data.length; i++) {
                     fileList.append($("<div/>", {
                         'class': 'video-link',
                         text: data[i].fileName,
+                        'data-file': "" + data[i].file,
                         click: function () {
-                            console.log($(this).text());
-                            player.attr('src', '/video2/' + $(this).text());
+                            var path = (currentPath + "/" + $(this).text()).replace(/[/][/]/gi, "/");
+                            if ($(this).attr('data-file') == 'true') {
+                                player.attr('src', '/video-random-accessible/' + path);
+                            } else {
+                                loadDirFiles(path);
+                            }
                         }
                     }));
                 }
+                if (data.length == 0)
+                    fileList.append($("<i/>", {text: "파일 목록이 없습니다."}));
             }).fail(function (e) {
                 fileList.text("error[" + e.status + "]: " + e.statusText);
+                alert("파일 목록 불러오기 실패");
             });
+        }
+
+        $(window).load(function () {
+            loadDirFiles();
         });
     </script>
 </div>

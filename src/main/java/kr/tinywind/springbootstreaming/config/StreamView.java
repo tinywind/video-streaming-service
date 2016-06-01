@@ -22,13 +22,8 @@ public class StreamView extends AbstractView {
 
     @Override
     protected void renderMergedOutputModel(Map<String, Object> map, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        //대상 동영상 파일명
-        String movieName = (String) map.get("movieName");
-
-        //progressbar 에서 특정 위치를 클릭하거나 해서 임의 위치의 내용을 요청할 수 있으므로
-        //파일의 임의의 위치에서 읽어오기 위해 RandomAccessFile 클래스를 사용한다.
-        //해당 파일이 없을 경우 예외 발생
-        RandomAccessFile randomFile = new RandomAccessFile(new File(VIDEO_ROOT, movieName), "r");
+        final File movieFIle = new File(VIDEO_ROOT + (String) map.get("movieName"));
+        final RandomAccessFile randomFile = new RandomAccessFile(movieFIle, "r");
 
         long rangeStart = 0; //요청 범위의 시작 위치
         long rangeEnd = 0; //요청 범위의 끝 위치
@@ -83,7 +78,7 @@ public class StreamView extends AbstractView {
                 out.write(buf, 0, len);
                 partSize -= block;
             } while (partSize > 0);
-            logger.debug("sent " + movieName + " " + rangeStart + "-" + rangeEnd);
+            logger.debug("sent " + movieFIle.getAbsolutePath() + " " + rangeStart + "-" + rangeEnd);
         } catch (IOException e) {
             //전송 중에 브라우저를 닫거나, 화면을 전환한 경우 종료해야 하므로 전송취소.
             //progressBar를 클릭한 경우에는 클릭한 위치값으로 재요청이 들어오므로 전송 취소.

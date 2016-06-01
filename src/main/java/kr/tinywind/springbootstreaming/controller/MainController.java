@@ -8,12 +8,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,6 +27,10 @@ import static kr.tinywind.springbootstreaming.config.Constants.VIDEO_ROOT;
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
+    private String decodePath(HttpServletRequest request, String prefix) throws UnsupportedEncodingException {
+        return URLDecoder.decode(request.getRequestURI().substring(prefix.length()), "UTF-8");
+    }
+
     @RequestMapping(value = {"", "show"})
     public String show() {
         return "show";
@@ -35,9 +38,15 @@ public class MainController {
 
     @RequestMapping("list")
     @ResponseBody
-    public List<FileNode> list(@RequestParam(required = false) String path) {
+    public List<FileNode> listNoSubUri(HttpServletRequest request) throws UnsupportedEncodingException {
+        return list(request);
+    }
+
+    @RequestMapping("list/{path}/**")
+    @ResponseBody
+    public List<FileNode> list(HttpServletRequest request) throws UnsupportedEncodingException {
         final List<FileNode> list = new ArrayList<>();
-        final String filePath = VIDEO_ROOT + (path == null ? "" : "" + path);
+        final String filePath = VIDEO_ROOT + decodePath(request, "/list/");
         try {
             final File directory = new File(filePath);
             final File[] files = directory.listFiles();
@@ -57,15 +66,15 @@ public class MainController {
         return list;
     }
 
-    @RequestMapping("video2/{path}/**")
-    public ModelAndView video2(@PathVariable("path") String path) {
-        return new ModelAndView("streamView", "movieName", path);
+    @RequestMapping("video-random-accessible/{path}/**")
+    public ModelAndView videoRandomAccessible(HttpServletRequest request) throws UnsupportedEncodingException {
+        return new ModelAndView("streamView", "movieName", decodePath(request, "/video-random-accessible/"));
     }
 
     @RequestMapping("video/{path}/**")
-    public ResponseEntity<InputStreamResource> video(@PathVariable("path") String path)
+    public ResponseEntity<InputStreamResource> video(HttpServletRequest request)
             throws UnsupportedEncodingException, FileNotFoundException {
-        final String decodeString = URLDecoder.decode(path, "UTF-8");
+        final String decodeString = decodePath(request, "/video/");
         File file = new File(VIDEO_ROOT + decodeString);
         logger.info("DOWNLOAD " + file.getAbsolutePath());
         final HttpHeaders headers = new HttpHeaders();
