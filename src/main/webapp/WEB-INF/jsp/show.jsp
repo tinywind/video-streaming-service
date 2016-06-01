@@ -27,6 +27,7 @@
 
 <div id="scripts">
     <script type="text/javascript" src="<c:url value="/webjars/jquery/2.1.4/dist/jquery.min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/!resources/library/jquery.blockUI-2.70.js"/>"></script>
     <script type="text/javascript">
         var currentPath = "";
         var pathInfo = $("#pathInfo");
@@ -56,6 +57,7 @@
         function loadDirFiles(path) {
             if (path == null)
                 path = "";
+            fileList.block();
             ajaxData("/list/" + path).done(function (data) {
                 fileList.empty();
                 currentPath = path;
@@ -93,9 +95,11 @@
                 }
                 if (data.length == 0)
                     fileList.append($("<i/>", {text: "파일 목록이 없습니다."}));
+                fileList.unblock();
             }).fail(function (e) {
                 fileList.text("error[" + e.status + "]: " + e.statusText);
                 alert("파일 목록 불러오기 실패");
+                fileList.unblock();
             });
         }
 
