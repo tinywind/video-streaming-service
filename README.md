@@ -26,6 +26,8 @@ References
 * http://march3samwuli.tistory.com/entry/Step-1-%EC%9D%8C%EC%95%85-%EC%8A%A4%ED%8A%B8%EB%A6%AC%EB%B0%8D-%EC%84%9C%EB%B2%84Spring-boot-%EC%95%B1Android%EC%9D%84-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%B3%B4%EC%9E%90
 * http://aodis.egloos.com/5962812
 * http://www.w3schools.com/html/html5_video.asp
+* https://msdn.microsoft.com/ko-kr/library/hh924823(v=vs.85).aspx
+* http://gingertech.net/2009/08/19/jumping-to-time-offsets-in-videos/ 
 
 
 # Why I work this project?
