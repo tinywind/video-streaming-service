@@ -22,7 +22,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kr.tinywind.springbootstreaming.config.Constants.VIDEO_ROOT_DIR_PATH;
+import static kr.tinywind.springbootstreaming.config.Constants.VIDEO_ROOT;
 
 @Controller
 public class MainController {
@@ -37,12 +37,17 @@ public class MainController {
     @ResponseBody
     public List<FileNode> list(@RequestParam(required = false) String path) {
         final List<FileNode> list = new ArrayList<>();
-        final String filePath = VIDEO_ROOT_DIR_PATH + (path == null ? "" : "" + path);
+        final String filePath = VIDEO_ROOT + (path == null ? "" : "" + path);
         try {
             final File directory = new File(filePath);
             final File[] files = directory.listFiles();
-            for (File file : files)
-                list.add(new FileNode(file.getName(), file.getName().contains(".mp4")));
+            for (File file : files) {
+                String fileName = file.getName();
+                if (file.isDirectory())
+                    list.add(new FileNode(fileName, false));
+                else if (fileName.toLowerCase().matches("^.*\\.mp4$"))
+                    list.add(new FileNode(fileName, true));
+            }
         } catch (Exception e) {
             logger.error("ERROR DURING FOR LOOP: " + e.getMessage());
             if (e.getCause() != null)
@@ -61,7 +66,7 @@ public class MainController {
     public ResponseEntity<InputStreamResource> video(@PathVariable("path") String path)
             throws UnsupportedEncodingException, FileNotFoundException {
         final String decodeString = URLDecoder.decode(path, "UTF-8");
-        File file = new File(VIDEO_ROOT_DIR_PATH + decodeString);
+        File file = new File(VIDEO_ROOT + decodeString);
         logger.info("DOWNLOAD " + file.getAbsolutePath());
         final HttpHeaders headers = new HttpHeaders();
         headers.add("Content-disposition", "attachment; filename=\"" + file.getName() + "\"");
