@@ -4,8 +4,8 @@ spring-boot, video streaming, jpa, lombok
 
 # How to Play
 * Install maven3, jdk1.8
-* compile command: ```$ mvn compile```
-* run command: ```$ mvn spring-boot:run -Dvideo.root.dir.path={your video directory path}```
+* compile command: `$ mvn compile`
+* run command: `$ mvn spring-boot:run -Dvideo.root.dir.path="{your video directory path}"`
 
 **Sample video clip: https://drive.google.com/file/d/0Bx_Rwq1Aqa7eWW1lQzJQbWhoZFk/view?usp=sharing**
 
