@@ -16,7 +16,7 @@
     </style>
 </head>
 <body>
-<h2>Streaming Show ( <span id="pathInfo"></span> )</h2>
+<h2>Streaming Show ( location: <span id="pathInfo"></span> )</h2>
 
 <div id="fileList"></div>
 <div>
