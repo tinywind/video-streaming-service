@@ -34,46 +34,44 @@
     </style>
 </head>
 <body>
+<div>
+    <a id="helpLink" href="#help">설명보기</a>
+</div>
 <h2>Streaming Show ( location: <span id="pathInfo"></span> )</h2>
 
 <div id="fileList"></div>
 
 <hr/>
 
-<div style="width: 640px;">
-    <video id="player" style="width: 100%;" autoplay="autoplay" poster="http://placehold.it/640x360"
-           loop="loop" <%--height="400"--%> <%--muted="muted"--%> controls="controls">
-        HTML5 Video is required for this example
-    </video>
-    <div style="text-align: center;">
-        <div>
+<div class="row">
+    <div style="width: 640px; float: left;">
+        <video id="player" style="width: 100%;" autoplay="autoplay" poster="http://placehold.it/640x360"
+               loop="loop" <%--height="400"--%> <%--muted="muted"--%> controls="controls">
+            HTML5 Video is required for this example
+        </video>
+        <div style="text-align: center;">
             <button id="restart" title="Restart button" class="btn glyphicon glyphicon-repeat"></button>
-            &nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
             <button id="rew" title="Rewind button" class="btn glyphicon glyphicon-backward"></button>
             <button id="play" title="Play button" class="btn glyphicon glyphicon-stop"></button>
             <button id="fwd" title="Forward button" class="btn glyphicon glyphicon-forward"></button>
-            &nbsp;&nbsp;
-            <button id="slower" title="Slower playback button" class="btn glyphicon glyphicon-fast-backward"></button>
-            <button id="faster" title="Faster playback button" class="btn glyphicon glyphicon-fast-forward"></button>
-        </div>
-        <br/>
-        <div>
-            <label>Playback </label>
-            <label>Reset playback rate: </label>
+            &nbsp;&nbsp;&nbsp;
+            <button id="slower" title="Slower playback button"
+                    class="btn glyphicon glyphicon-fast-backward"></button>
             <button id="normal" title="Reset playback rate button" class="btn glyphicon glyphicon-refresh"></button>
-
-            <label> Volume </label>
+            <button id="faster" title="Faster playback button"
+                    class="btn glyphicon glyphicon-fast-forward"></button>
+            &nbsp;&nbsp;&nbsp;
             <button id="volDn" title="Volume down button" class="btn glyphicon glyphicon-volume-down"></button>
             <button id="volUp" title="Volume up button" class="btn glyphicon glyphicon-volume-up"></button>
             <button id="mute" title="Mute button" class="btn glyphicon glyphicon-volume-off"></button>
         </div>
+        <br/>
+        <div title="Error message area" id="errorMsg" style="color:Red;"></div>
     </div>
-    <br/>
-    <div title="Error message area" id="errorMsg" style="color:Red;"></div>
-</div>
-
-<div>
-    <a id="helpLink" href="#help">설명보기</a>
+    <div style="width: 1em; float: left; min-height: 1px;"></div>
+    <div style="width: 320px; float: left; min-height: 100px; background: red;" id="keyLog">
+    </div>
 </div>
 
 <div id="help" style="display: none; padding: 2em; background: white; width: 30em; border-radius: 5px;">
@@ -83,6 +81,7 @@
     <div>방향키 위: 재생 속도 10% 빠르게</div>
     <div>방향키 아래: 재생 속도 10% 느리게</div>
     <div>Space bar: 비디오 재생/중지</div>
+    <div>backspace: 마지막 로그 삭제</div>
     <div>Q: 시선 좌측 상단</div>
     <div>W: 시선 상단</div>
     <div>E: 시선 좌측 상단</div>
