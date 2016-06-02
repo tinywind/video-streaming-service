@@ -28,6 +28,7 @@ References
 * http://www.w3schools.com/html/html5_video.asp
 * https://msdn.microsoft.com/ko-kr/library/hh924823(v=vs.85).aspx
 * http://gingertech.net/2009/08/19/jumping-to-time-offsets-in-videos/ 
+* https://ko.wikipedia.org/wiki/HTML5_%EB%B9%84%EB%94%94%EC%98%A4
 
 
 # Why I work this project?

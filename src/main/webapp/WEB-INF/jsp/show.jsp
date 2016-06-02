@@ -5,13 +5,30 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Hello Millky</title>
+    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/3.3.5/dist/css/bootstrap.css"/>"/>
     <style>
         .video-link {
             cursor: pointer;
+            display: block;
+            line-height: 20px;
         }
 
         .video-link:focus, .video-link:hover {
             text-decoration: underline;
+        }
+
+        .video-link:before {
+            width: 30px;
+            display: inline-block;
+        }
+
+        .file {
+            color: darkblue;
+            font-weight: bold;
+        }
+
+        .dir {
+            font-style: italic;
         }
     </style>
 </head>
@@ -88,7 +105,7 @@
                 currentPath = path;
                 pathInfo.text(currentPath);
                 fileList.append($("<div/>", {
-                    'class': 'video-link',
+                    'class': 'video-link glyphicon dir glyphicon-folder-open',
                     text: "<<이전 디렉토리로 이동>>",
                     click: function () {
                         if (currentPath == "" || currentPath == "/") {
@@ -105,12 +122,12 @@
                 }));
                 for (var i = 0; i < data.length; i++) {
                     fileList.append($("<div/>", {
-                        'class': 'video-link',
+                        'class': 'video-link glyphicon ' + (data[i].file ? 'file glyphicon-film' : 'dir glyphicon-folder-open'),
                         text: data[i].fileName,
                         'data-file': "" + data[i].file,
                         click: function () {
                             var path = (currentPath + "/" + $(this).text()).replace(/[/][/]/gi, "/");
-                            if ($(this).attr('data-file') == 'true') {
+                            if ($(this).hasClass('file')) {
                                 player.attr('src', '/video-random-accessible/' + path);
                             } else {
                                 loadDirFiles(path);
