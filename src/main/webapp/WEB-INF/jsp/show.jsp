@@ -25,6 +25,7 @@
         .file {
             color: darkblue;
             font-weight: bold;
+            padding-left: 1em;
         }
 
         .dir {
