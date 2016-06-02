@@ -37,10 +37,39 @@
 <h2>Streaming Show ( location: <span id="pathInfo"></span> )</h2>
 
 <div id="fileList"></div>
-<div>
-    <video id="player" controls="controls" autoplay="autoplay" poster="http://placehold.it/640x360" width="640"
-    <%--height="400"--%> loop="loop" <%--muted="muted"--%>>
+
+<hr/>
+
+<div style="width: 640px;">
+    <video id="player" style="width: 100%;" autoplay="autoplay" poster="http://placehold.it/640x360"
+           loop="loop" <%--height="400"--%> <%--muted="muted"--%> controls="controls">
+        HTML5 Video is required for this example
     </video>
+    <div style="text-align: center;">
+        <div>
+            <button id="restart" title="Restart button" class="btn glyphicon glyphicon-repeat"></button>
+            &nbsp;&nbsp;
+            <button id="rew" title="Rewind button" class="btn glyphicon glyphicon-backward"></button>
+            <button id="play" title="Play button" class="btn glyphicon glyphicon-stop"></button>
+            <button id="fwd" title="Forward button" class="btn glyphicon glyphicon-forward"></button>
+            &nbsp;&nbsp;
+            <button id="slower" title="Slower playback button" class="btn glyphicon glyphicon-fast-backward"></button>
+            <button id="faster" title="Faster playback button" class="btn glyphicon glyphicon-fast-forward"></button>
+        </div>
+        <br/>
+        <div>
+            <label>Playback </label>
+            <label>Reset playback rate: </label>
+            <button id="normal" title="Reset playback rate button" class="btn glyphicon glyphicon-refresh"></button>
+
+            <label> Volume </label>
+            <button id="volDn" title="Volume down button" class="btn glyphicon glyphicon-volume-down"></button>
+            <button id="volUp" title="Volume up button" class="btn glyphicon glyphicon-volume-up"></button>
+            <button id="mute" title="Mute button" class="btn glyphicon glyphicon-volume-off"></button>
+        </div>
+    </div>
+    <br/>
+    <div title="Error message area" id="errorMsg" style="color:Red;"></div>
 </div>
 
 <div>
@@ -76,6 +105,66 @@
         var player = $("#player");
         var helpLink = $("#helpLink");
         var help = $("#help");
+
+        function createPlayer() {
+            var video = document.getElementById("player");
+            if (video.canPlayType) {
+                document.getElementById("play").addEventListener("click", function (evt) {
+                    var button = $(evt.target);
+                    if (video.paused) {
+                        video.play();
+                        button.removeClass('glyphicon-play').addClass('glyphicon-stop');
+                    } else {
+                        video.pause();
+                        button.removeClass('glyphicon-stop').addClass('glyphicon-play');
+                    }
+                }, false);
+                document.getElementById("restart").addEventListener("click", function () {
+                    setTime(0);
+                }, false);
+                document.getElementById("rew").addEventListener("click", function () {
+                    setTime(-10);
+                }, false);
+                document.getElementById("fwd").addEventListener("click", function () {
+                    setTime(10);
+                }, false);
+                document.getElementById("slower").addEventListener("click", function () {
+                    video.playbackRate -= .25;
+                }, false);
+                document.getElementById("faster").addEventListener("click", function () {
+                    video.playbackRate += .25;
+                }, false);
+                document.getElementById("normal").addEventListener("click", function () {
+                    video.playbackRate = 1;
+                }, false);
+                document.getElementById("mute").addEventListener("click", function (evt) {
+                    if (video.muted) {
+                        video.muted = false;
+                        $(evt.target).addClass('glyphicon-volume-off').removeClass('glyphicon-bullhorn');
+                    } else {
+                        video.muted = true;
+                        $(evt.target).addClass('glyphicon-bullhorn').removeClass('glyphicon-volume-off');
+                    }
+                }, false);
+
+                video.addEventListener("error", function (err) {
+                    errMessage(err);
+                }, true);
+
+                function setTime(tValue) {
+                    try {
+                        video.currentTime = tValue + (tValue == 0 ? 0 : video.currentTime);
+                    } catch (err) {
+                        errMessage("Video content might not be loaded");
+                    }
+                }
+
+                function errMessage(msg) {
+                    document.getElementById("errorMsg").textContent = msg;
+                    setTimeout("document.getElementById('errorMsg').textContent=''", 5000);
+                }
+            }
+        }
 
         function ajaxData(url, data) {
             var deferred = $.Deferred();
@@ -147,6 +236,7 @@
         }
 
         $(window).load(function () {
+            createPlayer();
             helpLink.leanModal({closeButton: ".lean-overlay"});
             loadDirFiles();
         });
