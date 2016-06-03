@@ -70,13 +70,19 @@
     </style>
 </head>
 <body>
-<div>
-    <a id="helpLink" href="#help">설명보기</a>
-</div>
 <h2>Streaming Show ( location: <span id="pathInfo"></span> )</h2>
 
 <div id="fileList"></div>
 
+<hr/>
+<div class="row">
+    <div class="col-xs-6">
+        <button class="btn btn-default form-control" id="helpLink" data-href="#help"><b>설명 보기</b></button>
+    </div>
+    <div class="col-xs-6">
+        <button class="btn btn-info form-control" id="send-data"><b>데이터 보내기</b></button>
+    </div>
+</div>
 <hr/>
 
 <div class="row">
@@ -109,13 +115,22 @@
             <br/>
         </div>
         <div style="width: 1em; float: left; min-height: 1px;"></div>
-        <div style="width: 320px; float: left; min-height: 100px; background: red;" id="keyLog">
-        </div>
+        <table style="width: 320px; float: left; min-height: 100px; table-layout: fixed;"
+               class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>timestamp</th>
+                <th>key</th>
+            </tr>
+            </thead>
+            <tbody id="keyLog">
+            </tbody>
+        </table>
     </div>
 </div>
 
 <div id="help" style="display: none; padding: 2em; background: white; width: 30em; border-radius: 5px;">
-    <h2>사용방법 (전부 아직 미구현)</h2>
+    <h2>사용방법</h2>
     <div>방향키 왼쪽: 5초 전으로</div>
     <div>방향키 오른쪽: 5초 앞으로</div>
     <div>방향키 위: 재생 속도 10% 빠르게</div>
@@ -144,8 +159,8 @@
         var player = $("#player");
         var helpLink = $("#helpLink");
         var help = $("#help");
+        var keyLog = $("#keyLog");
         var comment = $("#player-comment");
-        var actor = $("#lead-fadeinout");
 
         var playerRew = $("#rew");
         var playerFwd = $("#fwd");
@@ -213,12 +228,9 @@
                 function setVol(value) {
                     var vol = player0.volume;
                     vol += value;
-                    //  test for range 0 - 1 to avoid exceptions
                     if (vol >= 0 && vol <= 1) {
-                        // if valid value, use it
                         player0.volume = vol;
                     } else {
-                        // otherwise substitute a 0 or 1
                         player0.volume = (vol < 0) ? 0 : 1;
                     }
                     showComment("volume: " + player0.volume);
@@ -265,6 +277,35 @@
             return deferred.promise();
         }
 
+        $("#send-data").click(function () {
+            var trList = keyLog.find("tr");
+            if (player.attr("src") == "" || player.attr("src") == null || trList.length <= 0)
+                return;
+
+            var form = $("<form/>", {
+                action: "/save",
+                method: "post"
+            });
+
+            form.append($("<input/>", {
+                name: "videoName",
+                value: player.attr("src")
+            }));
+
+            for (var i = 0; i < trList.length; i++) {
+                form.append($("<input/>", {
+                    name: "materialDataList["+i+"].timestamp",
+                    value: $(trList[i]).find("td:nth-child(1)").text()
+                })).append($("<input/>", {
+                    name: "materialDataList["+i+"].key",
+                    value: $(trList[i]).find("td:nth-child(2)").text()
+                }));
+            }
+
+            console.log(form);
+            form.submit();
+        });
+
         function loadDirFiles(path) {
             if (path == null)
                 path = "";
@@ -298,6 +339,7 @@
                             var path = (currentPath + "/" + $(this).text()).replace(/[/][/]/gi, "/");
                             if ($(this).hasClass('file')) {
                                 player.attr('src', '/video-random-accessible/' + path);
+                                keyLog.empty();
                             } else {
                                 loadDirFiles(path);
                             }
@@ -312,6 +354,16 @@
                 alert("파일 목록 불러오기 실패");
                 fileList.unblock();
             });
+        }
+
+        function addTr(timestamp, key) {
+            keyLog.append($('<tr/>')
+                    .append($('<td/>', {text: timestamp}))
+                    .append($('<td/>', {text: key})));
+        }
+
+        function removeTr() {
+            keyLog.find('tr:last').remove();
         }
 
         $(window).load(function () {
@@ -342,9 +394,9 @@
                     } else if (key == "enter") {
                         playerPlay.click();
                     } else if (key == "backspace") {
-
+                        removeTr();
                     } else if ($.inArray(key, arrowKeys) >= 0) {
-                        console.log(key);
+                        addTr(player0.currentTime, key);
                     }
                 }
             });
