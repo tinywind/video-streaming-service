@@ -7,6 +7,10 @@
     <title>Hello Millky</title>
     <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/3.3.5/dist/css/bootstrap.css"/>"/>
     <style>
+        html {
+            padding: 20px;
+        }
+
         .video-link {
             cursor: pointer;
             display: block;
@@ -31,6 +35,38 @@
         .dir {
             font-style: italic;
         }
+
+        @keyframes fadeinout {
+            from {
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        #player-comment {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 600px;
+            min-height: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            font-weight: bold;
+            color: orange;
+            opacity: 0;
+        }
+
+        .ani-blank {
+            animation: fadeinout 0.7s;
+        }
     </style>
 </head>
 <body>
@@ -44,33 +80,37 @@
 <hr/>
 
 <div class="row">
-    <div style="width: 640px; float: left;">
-        <video id="player" style="width: 100%;" autoplay="autoplay" poster="http://placehold.it/640x360"
-               loop="loop" <%--height="400"--%> <%--muted="muted"--%> controls="controls">
-            HTML5 Video is required for this example
-        </video>
-        <div style="text-align: center;">
-            <button id="restart" title="Restart button" class="btn glyphicon glyphicon-repeat"></button>
-            &nbsp;&nbsp;&nbsp;
-            <button id="rew" title="Rewind button" class="btn glyphicon glyphicon-backward"></button>
-            <button id="play" title="Play button" class="btn glyphicon glyphicon-stop"></button>
-            <button id="fwd" title="Forward button" class="btn glyphicon glyphicon-forward"></button>
-            &nbsp;&nbsp;&nbsp;
-            <button id="slower" title="Slower playback button"
-                    class="btn glyphicon glyphicon-fast-backward"></button>
-            <button id="normal" title="Reset playback rate button" class="btn glyphicon glyphicon-refresh"></button>
-            <button id="faster" title="Faster playback button"
-                    class="btn glyphicon glyphicon-fast-forward"></button>
-            &nbsp;&nbsp;&nbsp;
-            <button id="volDn" title="Volume down button" class="btn glyphicon glyphicon-volume-down"></button>
-            <button id="volUp" title="Volume up button" class="btn glyphicon glyphicon-volume-up"></button>
-            <button id="mute" title="Mute button" class="btn glyphicon glyphicon-volume-off"></button>
+    <div class="col-xs-12">
+        <div style="width: 640px; float: left;">
+            <div style="position: relative;">
+                <div id="player-comment"></div>
+                <video id="player" style="width: 100%;" autoplay="autoplay"
+                       poster="http://placehold.it/640x360"
+                       loop="loop" <%--height="400"--%> <%--muted="muted"--%> controls="controls">
+                </video>
+            </div>
+            <div style="text-align: center;">
+                <button id="restart" title="Restart button" class="btn glyphicon glyphicon-repeat"></button>
+                &nbsp;&nbsp;&nbsp;
+                <button id="rew" title="Rewind button" class="btn glyphicon glyphicon-backward"></button>
+                <button id="play" title="Play button" class="btn glyphicon glyphicon-stop"></button>
+                <button id="fwd" title="Forward button" class="btn glyphicon glyphicon-forward"></button>
+                &nbsp;&nbsp;&nbsp;
+                <button id="slower" title="Slower playback button"
+                        class="btn glyphicon glyphicon-fast-backward"></button>
+                <button id="normal" title="Reset playback rate button" class="btn glyphicon glyphicon-refresh"></button>
+                <button id="faster" title="Faster playback button"
+                        class="btn glyphicon glyphicon-fast-forward"></button>
+                &nbsp;&nbsp;&nbsp;
+                <button id="volDn" title="Volume down button" class="btn glyphicon glyphicon-volume-down"></button>
+                <button id="volUp" title="Volume up button" class="btn glyphicon glyphicon-volume-up"></button>
+                <button id="mute" title="Mute button" class="btn glyphicon glyphicon-volume-off"></button>
+            </div>
+            <br/>
         </div>
-        <br/>
-        <div title="Error message area" id="errorMsg" style="color:Red;"></div>
-    </div>
-    <div style="width: 1em; float: left; min-height: 1px;"></div>
-    <div style="width: 320px; float: left; min-height: 100px; background: red;" id="keyLog">
+        <div style="width: 1em; float: left; min-height: 1px;"></div>
+        <div style="width: 320px; float: left; min-height: 100px; background: red;" id="keyLog">
+        </div>
     </div>
 </div>
 
@@ -104,65 +144,105 @@
         var player = $("#player");
         var helpLink = $("#helpLink");
         var help = $("#help");
+        var comment = $("#player-comment");
+        var actor = $("#lead-fadeinout");
+
+        var playerRew = $("#rew");
+        var playerFwd = $("#fwd");
+        var playerSlower = $("#slower");
+        var playerFaster = $("#faster");
+        var playerPlay = $("#play");
 
         function createPlayer() {
-            var video = document.getElementById("player");
-            if (video.canPlayType) {
-                document.getElementById("play").addEventListener("click", function (evt) {
-                    var button = $(evt.target);
-                    if (video.paused) {
-                        video.play();
+            var player0 = player[0];
+            if (player0.canPlayType) {
+                playerRew.click(function (e) {
+                    e.stopPropagation();
+                    setTime(-5);
+                });
+                playerFwd.click(function (e) {
+                    e.stopPropagation();
+                    setTime(5);
+                });
+                playerSlower.click(function (e) {
+                    e.stopPropagation();
+                    player0.playbackRate -= .25;
+                    showComment("playbackRate: " + player0.playbackRate);
+                });
+                playerFaster.click(function (e) {
+                    e.stopPropagation();
+                    player0.playbackRate += .25;
+                    showComment("playbackRate: " + player0.playbackRate);
+                });
+                playerPlay.click(function (e) {
+                    e.stopPropagation();
+                    var button = $(e.target);
+                    if (player0.paused) {
+                        player0.play();
                         button.removeClass('glyphicon-play').addClass('glyphicon-stop');
                     } else {
-                        video.pause();
+                        player0.pause();
                         button.removeClass('glyphicon-stop').addClass('glyphicon-play');
                     }
-                }, false);
+                });
+
                 document.getElementById("restart").addEventListener("click", function () {
                     setTime(0);
                 }, false);
-                document.getElementById("rew").addEventListener("click", function () {
-                    setTime(-10);
-                }, false);
-                document.getElementById("fwd").addEventListener("click", function () {
-                    setTime(10);
-                }, false);
-                document.getElementById("slower").addEventListener("click", function () {
-                    video.playbackRate -= .25;
-                }, false);
-                document.getElementById("faster").addEventListener("click", function () {
-                    video.playbackRate += .25;
-                }, false);
                 document.getElementById("normal").addEventListener("click", function () {
-                    video.playbackRate = 1;
+                    player0.playbackRate = 1;
+                    showComment("playbackRate: " + player0.playbackRate);
                 }, false);
-                document.getElementById("mute").addEventListener("click", function (evt) {
-                    if (video.muted) {
-                        video.muted = false;
-                        $(evt.target).addClass('glyphicon-volume-off').removeClass('glyphicon-bullhorn');
+                document.getElementById("mute").addEventListener("click", function (e) {
+                    if (player0.muted) {
+                        player0.muted = false;
+                        $(e.target).addClass('glyphicon-volume-off').removeClass('glyphicon-bullhorn');
                     } else {
-                        video.muted = true;
-                        $(evt.target).addClass('glyphicon-bullhorn').removeClass('glyphicon-volume-off');
+                        player0.muted = true;
+                        $(e.target).addClass('glyphicon-bullhorn').removeClass('glyphicon-volume-off');
                     }
+                    showComment("sound " + (player0.muted ? "off" : "on"));
+                }, false);
+                document.getElementById("volDn").addEventListener("click", function () {
+                    setVol(-.1); // down by 10%
+                }, false);
+                document.getElementById("volUp").addEventListener("click", function () {
+                    setVol(.1);  // up by 10%
                 }, false);
 
-                video.addEventListener("error", function (err) {
-                    errMessage(err);
-                }, true);
-
-                function setTime(tValue) {
-                    try {
-                        video.currentTime = tValue + (tValue == 0 ? 0 : video.currentTime);
-                    } catch (err) {
-                        errMessage("Video content might not be loaded");
+                function setVol(value) {
+                    var vol = player0.volume;
+                    vol += value;
+                    //  test for range 0 - 1 to avoid exceptions
+                    if (vol >= 0 && vol <= 1) {
+                        // if valid value, use it
+                        player0.volume = vol;
+                    } else {
+                        // otherwise substitute a 0 or 1
+                        player0.volume = (vol < 0) ? 0 : 1;
                     }
+                    showComment("volume: " + player0.volume);
                 }
 
-                function errMessage(msg) {
-                    document.getElementById("errorMsg").textContent = msg;
-                    setTimeout("document.getElementById('errorMsg').textContent=''", 5000);
+                player0.addEventListener("error", function (err) {
+                    showComment("err: " + err);
+                }, true);
+            }
+
+            function setTime(tValue) {
+                try {
+                    player0.currentTime = tValue + (tValue == 0 ? 0 : player0.currentTime);
+                    showComment(player0.currentTime + "s");
+                } catch (err) {
+                    showComment("err: " + "Video content might not be loaded");
                 }
             }
+        }
+
+        function showComment(text) {
+            comment.text(text).removeClass('ani-blank');
+            comment[0].offsetWidth = comment[0].offsetWidth;
+            comment.addClass('ani-blank');
         }
 
         function ajaxData(url, data) {
@@ -238,6 +318,36 @@
             createPlayer();
             helpLink.leanModal({closeButton: ".lean-overlay"});
             loadDirFiles();
+
+            $(document).bind('keyup keydown keypress', function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            });
+
+            $(document).keyup(function (e) {
+//                console.log(e);
+                var arrowKeys = ['q', 'w', 'e', 'a', 's', 'd', 'z', 'x', 'c'];
+                var player0 = player[0];
+                if (player0.canPlayType && !player0.paused) {
+                    var key = e.key.toLowerCase();
+
+                    if (key == "arrowleft") {
+                        playerRew.click();
+                    } else if (key == "arrowright") {
+                        playerFwd.click();
+                    } else if (key == "arrowup") {
+                        playerFaster.click();
+                    } else if (key == "arrowdown") {
+                        playerSlower.click();
+                    } else if (key == "enter") {
+                        playerPlay.click();
+                    } else if (key == "backspace") {
+
+                    } else if ($.inArray(key, arrowKeys) >= 0) {
+                        console.log(key);
+                    }
+                }
+            });
         });
     </script>
 </div>
