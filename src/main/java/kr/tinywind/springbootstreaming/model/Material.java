@@ -6,12 +6,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -28,6 +28,6 @@ public class Material extends AbstractPersistable<Long> {
     @NonNull
     private Date createdAt = new Date();
 
-    @OneToMany(mappedBy = "material")
-    private List<MaterialData> materialDataList = new ArrayList<>();
+    @OneToMany(mappedBy = "material", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private List<MaterialData> materialDataList = new MaterialDataList<>(this);
 }

@@ -1,5 +1,6 @@
 package kr.tinywind.springbootstreaming.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -16,8 +17,8 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MaterialData extends AbstractPersistable<Long> {
-    @ManyToOne
-    @JoinColumn(name = "material_id", referencedColumnName = "id", nullable = false)
+    @JsonIgnore
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Material material;
 
     @Column(nullable = false)

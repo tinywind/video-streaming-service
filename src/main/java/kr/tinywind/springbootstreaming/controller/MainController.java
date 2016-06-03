@@ -38,7 +38,7 @@ public class MainController {
     private MaterialDataRepository dataRepository;
 
     private String decodePath(HttpServletRequest request, String prefix) throws UnsupportedEncodingException {
-        return URLDecoder.decode(request.getRequestURI().substring(prefix.length()), "UTF-8");
+        return URLDecoder.decode(request.getRequestURI().replaceAll("[/]+", "/").substring(prefix.length()), "UTF-8");
     }
 
     @RequestMapping(value = {"", "show"})
@@ -104,9 +104,6 @@ public class MainController {
     @RequestMapping("save")
     @ResponseBody
     public Material save(Material material) {
-        final Material saved = materialRepository.saveAndFlush(material);
-//        saved.getMaterialDataList().forEach(e -> e.setMaterial(saved));
-//        dataRepository.flush();
-        return saved;
+        return materialRepository.saveAndFlush(material);
     }
 }
