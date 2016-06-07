@@ -1,27 +1,32 @@
 package kr.tinywind.springbootstreaming.controller;
 
-import kr.tinywind.springbootstreaming.model.FileNode;
-import kr.tinywind.springbootstreaming.model.Material;
-import kr.tinywind.springbootstreaming.model.MaterialDataRepository;
-import kr.tinywind.springbootstreaming.model.MaterialRepository;
+import kr.tinywind.springbootstreaming.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,16 +99,42 @@ public class MainController {
                 .body(new InputStreamResource(new FileInputStream(file)));
     }
 
-    @RequestMapping("material-list")
-    @ResponseBody
-    public List<Material> materialList() {
-        List<Material> all = materialRepository.findAll();
-        return all;
-    }
-
     @RequestMapping("save")
     @ResponseBody
     public Material save(Material material) {
         return materialRepository.saveAndFlush(material);
+    }
+
+    @RequestMapping("material-list")
+    public String materialList(Model model, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pagingOption) {
+        model.addAttribute("postPage", materialRepository.findAll(pagingOption));
+        return "material-list";
+    }
+
+    @RequestMapping("download-csv/{id}")
+    public void downloadCSV(HttpServletResponse response, @PathVariable("id") Long id) throws IOException {
+        final Material material = materialRepository.findOne(id);
+        if (material == null)
+            throw new IllegalArgumentException("[" + id + "] data is not exist.");
+
+        String videoName = material.getVideoName();
+        int lastIndexOf = videoName.lastIndexOf("/");
+        videoName = lastIndexOf >= 0 ? videoName.substring(lastIndexOf + 1, videoName.length()) : videoName;
+        final String csvFileName = videoName + "_" + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(material.getCreatedAt())) + ".csv";
+
+        response.setContentType("text/csv");
+
+        String headerKey = "Content-Disposition";
+        String headerValue = String.format("attachment; filename=\"%s\"", csvFileName);
+        response.setHeader(headerKey, headerValue);
+
+        final ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        final String[] header = {"timestamp", "key"};
+        csvWriter.writeHeader(header);
+
+        for (MaterialData data : material.getMaterialDataList())
+            csvWriter.write(data, header);
+
+        csvWriter.close();
     }
 }
