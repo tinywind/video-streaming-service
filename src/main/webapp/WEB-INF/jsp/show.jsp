@@ -76,10 +76,13 @@
 
 <hr/>
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-xs-4">
         <button class="btn btn-default form-control" id="helpLink" data-href="#help"><b>설명 보기</b></button>
     </div>
-    <div class="col-xs-6">
+    <div class="col-xs-4">
+        <button class="btn btn-default form-control"><a href="/material-list">DATA 다운받기(CSV)</a></button>
+    </div>
+    <div class="col-xs-4">
         <button class="btn btn-info form-control" id="send-data"><b>데이터 보내기</b></button>
     </div>
 </div>
