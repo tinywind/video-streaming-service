@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -14,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -100,9 +100,11 @@ public class MainController {
     }
 
     @RequestMapping("save")
-    @ResponseBody
-    public Material save(Material material) {
-        return materialRepository.saveAndFlush(material);
+    public String save(Material material) {
+        if (!StringUtils.isEmpty(material.getVideoName()))
+            if (material.getMaterialDataList().size() > 0)
+                materialRepository.saveAndFlush(material);
+        return "redirect:/material-list";
     }
 
     @RequestMapping("material-list")
