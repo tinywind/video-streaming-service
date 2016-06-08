@@ -4,7 +4,7 @@
 <html lang="ko">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Hello Millky</title>
+    <title>DATA PROCESSING</title>
     <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/3.3.5/dist/css/bootstrap.css"/>"/>
     <style>
         html {
@@ -70,17 +70,17 @@
     </style>
 </head>
 <body>
-<h2>Streaming Show ( location: <span id="pathInfo"></span> )</h2>
+<h2>EYE DATA RECORDING ( location: <span id="pathInfo"></span> )</h2>
 
 <div id="fileList"></div>
 
 <hr/>
 <div class="row">
     <div class="col-xs-6">
-        <button class="btn btn-default form-control" id="helpLink" data-href="#help"><b>설명 보기</b></button>
+        <button class="btn btn-default form-control" id="helpLink" data-href="#help"><b>KEY INSTRUCTION</b></button>
     </div>
     <div class="col-xs-6">
-        <button class="btn btn-info form-control" id="send-data"><b>DATA 다운받기(CSV)</b></button>
+        <button class="btn btn-info form-control" id="send-data"><b>SAVE TO CSV</b></button>
     </div>
 </div>
 <hr/>
@@ -316,7 +316,7 @@
                 pathInfo.text(currentPath);
                 fileList.append($("<div/>", {
                     'class': 'video-link glyphicon dir glyphicon-folder-open',
-                    text: "<<이전 디렉토리로 이동>>",
+                    text: "<<MOVE TO THE PREVIOUS FOLDER>>",
                     click: function () {
                         if (currentPath == "" || currentPath == "/") {
                             loadDirFiles();
@@ -347,11 +347,11 @@
                     }));
                 }
                 if (data.length == 0)
-                    fileList.append($("<i/>", {text: "파일 목록이 없습니다."}));
+                    fileList.append($("<i/>", {text: "NO MP4 EXISTS"}));
                 fileList.unblock();
             }).fail(function (e) {
                 fileList.text("error[" + e.status + "]: " + e.statusText);
-                alert("파일 목록 불러오기 실패");
+                alert("FAILED TO CREATE FILE LIST");
                 fileList.unblock();
             });
         }
