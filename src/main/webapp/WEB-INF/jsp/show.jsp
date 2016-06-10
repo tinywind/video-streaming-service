@@ -294,10 +294,10 @@
 
             for (var i = 0; i < trList.length; i++) {
                 form.append($("<input/>", {
-                    name: "materialDataList["+i+"].timestamp",
+                    name: "materialDataList[" + i + "].timestamp",
                     value: $(trList[i]).find("td:nth-child(1)").text()
                 })).append($("<input/>", {
-                    name: "materialDataList["+i+"].key",
+                    name: "materialDataList[" + i + "].key",
                     value: $(trList[i]).find("td:nth-child(2)").text()
                 }));
             }
@@ -379,24 +379,25 @@
             $(document).keyup(function (e) {
 //                console.log(e);
                 var arrowKeys = ['q', 'w', 'e', 'a', 's', 'd', 'z', 'x', 'c'];
+                var key = e.key.toLowerCase();
                 var player0 = player[0];
-                if (player0.canPlayType && !player0.paused) {
-                    var key = e.key.toLowerCase();
-
-                    if (key == "arrowleft") {
-                        playerRew.click();
-                    } else if (key == "arrowright") {
-                        playerFwd.click();
-                    } else if (key == "arrowup") {
-                        playerFaster.click();
-                    } else if (key == "arrowdown") {
-                        playerSlower.click();
-                    } else if (key == "enter") {
+                if (player0.canPlayType) {
+                    if (key == " ") {
                         playerPlay.click();
-                    } else if (key == "backspace") {
-                        removeTr();
-                    } else if ($.inArray(key, arrowKeys) >= 0) {
-                        addTr(player0.currentTime, key);
+                    } else if (!player0.paused) {
+                        if (key == "arrowleft") {
+                            playerRew.click();
+                        } else if (key == "arrowright") {
+                            playerFwd.click();
+                        } else if (key == "arrowup") {
+                            playerFaster.click();
+                        } else if (key == "arrowdown") {
+                            playerSlower.click();
+                        } else if (key == "backspace") {
+                            removeTr();
+                        } else if ($.inArray(key, arrowKeys) >= 0) {
+                            addTr(player0.currentTime, key);
+                        }
                     }
                 }
             });

@@ -17,9 +17,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>kr.tinywind.springbootstreaming.Launcher</start-class>
+        <!--<start-class>kr.tinywind.springbootstreaming.Launcher</start-class>-->
         <java.version>1.8</java.version>
-        <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
+        <!--<m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>-->
     </properties>
 
     <dependencies>
@@ -78,10 +78,47 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>target/generated-sources/delombok</sourceDirectory>
+        <testSourceDirectory>target/generated-test-sources/delombok</testSourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.16.8.0</version>
+                <executions>
+                    <execution>
+                        <id>delombok</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                        <configuration>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <sourceDirectory>src/main/java</sourceDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-delombok</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>testDelombok</goal>
+                        </goals>
+                        <configuration>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <sourceDirectory>src/test/java</sourceDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
             </plugin>
         </plugins>
     </build>
