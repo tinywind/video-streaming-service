@@ -102,8 +102,8 @@ public class MainController {
     @RequestMapping("save")
     public String save(Material material) {
         if (!StringUtils.isEmpty(material.getVideoName()))
-            if (material.getMaterialDataList().size() > 0)
-                materialRepository.saveAndFlush(material);
+//            if (material.getMaterialDataList().size() > 0)
+            materialRepository.saveAndFlush(material);
         return "redirect:/material-list";
     }
 

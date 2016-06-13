@@ -51,11 +51,12 @@
             }
         }
 
-        #player-comment {
+        #playerComment {
             position: absolute;
-            top: 5px;
-            left: 5px;
-            width: 600px;
+            width: 100%;
+            padding-left: 1em;
+            padding-right: 1em;
+            top: 2em;
             min-height: 1px;
             white-space: nowrap;
             overflow: hidden;
@@ -64,15 +65,57 @@
             opacity: 0;
         }
 
+        #playerTitle {
+            position: absolute;
+            width: 100%;
+            padding-left: 1em;
+            padding-right: 1em;
+            top: 0.5em;
+            min-height: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            font-weight: bold;
+            color: indigo;
+        }
+
+        #progressContainer {
+            position: absolute;
+            width: 96%;
+            left: 2%;
+            bottom: 0;
+            opacity: 0.5;
+        }
+
         .ani-blank {
             animation: fadeinout 0.7s;
         }
+
+        article {
+            width: 1.5em;
+            float: left;
+            text-align: center;
+            padding-left: 0.1em;
+            padding-right: 0.1em;
+            height: 8em;
+        }
+
+        article .key {
+            font-weight: bold;
+            color: firebrick;
+            padding-bottom: 0.5em;
+        }
+
+        article .timestamp {
+            -ms-transform: rotate(90deg); /* IE 9 */
+            -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+            transform: rotate(90deg);
+        }
     </style>
 </head>
-<body>
+<body style="min-width: 640px;">
 <h2>EYE DATA RECORDING ( location: <span id="pathInfo"></span> )</h2>
 
-<div id="fileList"></div>
+<div id="fileList" style="height: 100px; overflow-x: hidden; overflow-y: auto;"></div>
 
 <hr/>
 <div class="row">
@@ -85,49 +128,47 @@
 </div>
 <hr/>
 
-<div class="row">
-    <div class="col-xs-12">
-        <div style="width: 640px; float: left;">
-            <div style="position: relative;">
-                <div id="player-comment"></div>
-                <video id="player" style="width: 100%;" autoplay="autoplay"
-                       poster="http://placehold.it/640x360"
-                       loop="loop" <%--height="400"--%> <%--muted="muted"--%> controls="controls">
-                </video>
-            </div>
-            <div style="text-align: center;">
-                <button id="restart" title="Restart button" class="btn glyphicon glyphicon-repeat"></button>
-                &nbsp;&nbsp;&nbsp;
-                <button id="rew" title="Rewind button" class="btn glyphicon glyphicon-backward"></button>
-                <button id="play" title="Play button" class="btn glyphicon glyphicon-stop"></button>
-                <button id="fwd" title="Forward button" class="btn glyphicon glyphicon-forward"></button>
-                &nbsp;&nbsp;&nbsp;
-                <button id="slower" title="Slower playback button"
-                        class="btn glyphicon glyphicon-fast-backward"></button>
-                <button id="normal" title="Reset playback rate button" class="btn glyphicon glyphicon-refresh"></button>
-                <button id="faster" title="Faster playback button"
-                        class="btn glyphicon glyphicon-fast-forward"></button>
-                &nbsp;&nbsp;&nbsp;
-                <button id="volDn" title="Volume down button" class="btn glyphicon glyphicon-volume-down"></button>
-                <button id="volUp" title="Volume up button" class="btn glyphicon glyphicon-volume-up"></button>
-                <button id="mute" title="Mute button" class="btn glyphicon glyphicon-volume-off"></button>
-            </div>
-            <br/>
+<div style="width: 100%;">
+    <div style="position: relative; overflow: hidden;">
+        <div id="playerContainer" style="position: absolute; width: 100%; top: 0; left: 0;">
+            <video id="player" style="width: 100%;" autoplay="autoplay"
+                   poster="http://placehold.it/640x360"
+            <%--loop="loop"--%> <%--height="400"--%> <%--muted="muted"--%> <%--controls="controls"--%>>
+            </video>
         </div>
-        <div style="width: 1em; float: left; min-height: 1px;"></div>
-        <table style="width: 320px; float: left; min-height: 100px; table-layout: fixed;"
-               class="table table-hover table-striped">
-            <thead>
-            <tr>
-                <th>timestamp</th>
-                <th>key</th>
-            </tr>
-            </thead>
-            <tbody id="keyLog">
-            </tbody>
-        </table>
+        <div id="playerPadding" style="position: relative; width: 100%; padding-bottom: 60%;">
+            <div id="playerTitle"></div>
+            <div id="playerComment"></div>
+            <div class="progress" id="progressContainer">
+                <div id="playerProgress" class="progress-bar progress-bar-info progress-bar-striped"
+                     role="progressbar" <%--aria-valuenow="70"--%>
+                     aria-valuemin="0" aria-valuemax="100" style="width:0; transition-duration: 0.1s;"></div>
+            </div>
+        </div>
     </div>
+    <div style="text-align: center;">
+        <button id="restart" title="Restart button" class="btn glyphicon glyphicon-repeat"></button>
+        &nbsp;&nbsp;&nbsp;
+        <button id="rew" title="Rewind button" class="btn glyphicon glyphicon-backward"></button>
+        <button id="play" title="Play button" class="btn glyphicon glyphicon-stop"></button>
+        <button id="fwd" title="Forward button" class="btn glyphicon glyphicon-forward"></button>
+        &nbsp;&nbsp;&nbsp;
+        <button id="slower" title="Slower playback button"
+                class="btn glyphicon glyphicon-fast-backward"></button>
+        <button id="normal" title="Reset playback rate button" class="btn glyphicon glyphicon-refresh"></button>
+        <button id="faster" title="Faster playback button"
+                class="btn glyphicon glyphicon-fast-forward"></button>
+        &nbsp;&nbsp;&nbsp;
+        <button id="volDn" title="Volume down button" class="btn glyphicon glyphicon-volume-down"></button>
+        <button id="volUp" title="Volume up button" class="btn glyphicon glyphicon-volume-up"></button>
+        <button id="mute" title="Mute button" class="btn glyphicon glyphicon-volume-off"></button>
+    </div>
+    <br/>
 </div>
+
+<hr/>
+<div id="keyLog" class="clearfix" style="width: 100%; overflow-x: auto; min-height: 1px;"></div>
+<hr/>
 
 <div id="help" style="display: none; padding: 2em; background: white; width: 30em; border-radius: 5px;">
     <h2>사용방법</h2>
@@ -137,6 +178,10 @@
     <div>방향키 아래: 재생 속도 10% 느리게</div>
     <div>Space bar: 비디오 재생/중지</div>
     <div>backspace: 마지막 로그 삭제</div>
+    <div>+: 화면 비율 확대</div>
+    <div>-: 화면 비율 축소</div>
+    <div>=: 화면 비율 100%</div>
+    <div>ctrl + 방향키: 화면 중심 이동</div>
     <div>Q: 시선 좌측 상단</div>
     <div>W: 시선 상단</div>
     <div>E: 시선 좌측 상단</div>
@@ -156,11 +201,16 @@
         var currentPath = "";
         var pathInfo = $("#pathInfo");
         var fileList = $("#fileList");
+        var playerTitle = $("#playerTitle");
+        var playerContainer = $("#playerContainer");
+        var playerPadding = $("#playerPadding");
+        var playerProgress = $("#playerProgress");
         var player = $("#player");
+        var player0 = player[0];
         var helpLink = $("#helpLink");
         var help = $("#help");
         var keyLog = $("#keyLog");
-        var comment = $("#player-comment");
+        var comment = $("#playerComment");
 
         var playerRew = $("#rew");
         var playerFwd = $("#fwd");
@@ -169,15 +219,19 @@
         var playerPlay = $("#play");
 
         function createPlayer() {
-            var player0 = player[0];
+            player.bind('progress', function () {
+                adjustVideoContainerRatio();
+                playerProgress.css({width: ((player0.currentTime / player0.duration) * 100) + "%"})
+            });
+
             if (player0.canPlayType) {
                 playerRew.click(function (e) {
                     e.stopPropagation();
-                    setTime(-5);
+                    setTime(-3);
                 });
                 playerFwd.click(function (e) {
                     e.stopPropagation();
-                    setTime(5);
+                    setTime(3);
                 });
                 playerSlower.click(function (e) {
                     e.stopPropagation();
@@ -278,7 +332,7 @@
         }
 
         $("#send-data").click(function () {
-            var trList = keyLog.find("tr");
+            var articleList = keyLog.find("article");
 //            if (player.attr("src") == "" || player.attr("src") == null || trList.length <= 0)
 //                return;
 
@@ -292,13 +346,13 @@
                 value: player.attr("src")
             }));
 
-            for (var i = 0; i < trList.length; i++) {
+            for (var i = 0; i < articleList.length; i++) {
                 form.append($("<input/>", {
-                    name: "materialDataList[" + i + "].timestamp",
-                    value: $(trList[i]).find("td:nth-child(1)").text()
-                })).append($("<input/>", {
                     name: "materialDataList[" + i + "].key",
-                    value: $(trList[i]).find("td:nth-child(2)").text()
+                    value: $(articleList[i]).find(".key").text()
+                })).append($("<input/>", {
+                    name: "materialDataList[" + i + "].timestamp",
+                    value: $(articleList[i]).find(".timestamp").text()
                 }));
             }
 
@@ -340,6 +394,8 @@
                             if ($(this).hasClass('file')) {
                                 player.attr('src', '/video-random-accessible/' + path);
                                 keyLog.empty();
+                                playerContainer.css({left: 0, top: 0});
+                                playerTitle.text(path)
                             } else {
                                 loadDirFiles(path);
                             }
@@ -356,14 +412,25 @@
             });
         }
 
-        function addTr(timestamp, key) {
-            keyLog.append($('<tr/>')
-                    .append($('<td/>', {text: timestamp}))
-                    .append($('<td/>', {text: key})));
+        function addArticle(timestamp, key) {
+            keyLog.append(
+                    $('<article/>')
+                            .append($('<div/>', {'class': 'key', text: key}))
+                            .append($('<div/>', {'class': 'timestamp', text: timestamp}))
+            );
         }
 
-        function removeTr() {
-            keyLog.find('tr:last').remove();
+        function removeArticle() {
+            keyLog.find('article:last').remove();
+        }
+
+        var videoRatio = 1;
+
+        function adjustVideoContainerRatio() {
+            var ratio = player0.videoHeight / player0.videoWidth;
+//            console.log("ratio:" + ratio);
+            if (!isNaN(ratio))
+                playerPadding.css({'padding-bottom': (ratio * 100) + '%'});
         }
 
         $(window).load(function () {
@@ -376,27 +443,64 @@
                 e.preventDefault();
             });
 
-            $(document).keyup(function (e) {
+            $(document).keydown(function (e) {
 //                console.log(e);
-                var arrowKeys = ['q', 'w', 'e', 'a', 's', 'd', 'z', 'x', 'c'];
+                var eyeTrackingKeys = ['q', 'w', 'e', 'a', 's', 'd', 'z', 'x', 'c'];
+                var arrowKeys = ['arrowleft', 'arrowright', 'arrowup', 'arrowdown'];
                 var key = e.key.toLowerCase();
-                var player0 = player[0];
                 if (player0.canPlayType) {
                     if (key == " ") {
                         playerPlay.click();
                     } else if (!player0.paused) {
-                        if (key == "arrowleft") {
-                            playerRew.click();
-                        } else if (key == "arrowright") {
-                            playerFwd.click();
-                        } else if (key == "arrowup") {
-                            playerFaster.click();
-                        } else if (key == "arrowdown") {
-                            playerSlower.click();
-                        } else if (key == "backspace") {
-                            removeTr();
+                        if ($.inArray(key, eyeTrackingKeys) >= 0) {
+                            addArticle(player0.currentTime, key);
                         } else if ($.inArray(key, arrowKeys) >= 0) {
-                            addTr(player0.currentTime, key);
+                            if (e.ctrlKey) {
+                                var left = parseInt(playerContainer.css('left'));
+                                var top = parseInt(playerContainer.css('top'));
+                                var width = parseInt(playerPadding.css('width'));
+                                var height = parseInt(playerPadding.css('height'));
+                                var videoWidth = parseInt(playerContainer.css('width'));
+                                var videoHeight = parseInt(playerContainer.css('height'));
+                                var INTERVAL = 5;
+                                if (key == "arrowleft") {
+                                    var last = left - INTERVAL;
+                                    if (last <= 0 && width <= videoWidth + last)
+                                        playerContainer.css({left: last + 'px'});
+                                } else if (key == "arrowright") {
+                                    last = left + INTERVAL;
+                                    if (last <= 0 && width <= videoWidth + last)
+                                        playerContainer.css({left: last + 'px'});
+                                } else if (key == "arrowup") {
+                                    last = top - INTERVAL;
+                                    if (last <= 0 && height <= videoHeight + last)
+                                        playerContainer.css({top: last + 'px'});
+                                } else if (key == "arrowdown") {
+                                    last = top + INTERVAL;
+                                    if (last <= 0 && height <= videoHeight + last)
+                                        playerContainer.css({top: last + 'px'});
+                                }
+                            } else {
+                                if (key == "arrowleft") {
+                                    playerRew.click();
+                                } else if (key == "arrowright") {
+                                    playerFwd.click();
+                                } else if (key == "arrowup") {
+                                    playerFaster.click();
+                                } else if (key == "arrowdown") {
+                                    playerSlower.click();
+                                }
+                            }
+                        } else if (key == '+') {
+                            videoRatio += 0.1;
+                            playerContainer.css({width: videoRatio * 100 + '%'});
+                        } else if (key == '-') {
+                            videoRatio = videoRatio - 0.1 < 1 ? 1 : videoRatio - 0.1;
+                            playerContainer.css({width: videoRatio * 100 + '%'});
+                        } else if (key == '=') {
+                            playerContainer.css({left: 0, top: 0, width: '100%'});
+                        } else if (key == "backspace") {
+                            removeArticle();
                         }
                     }
                 }
