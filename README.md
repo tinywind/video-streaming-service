@@ -14,8 +14,6 @@ spring-boot, video streaming, jpa, lombok
 * Install jdk1.8
 * run command: `$ java -Dvideo.root="{your video directory path}" -jar {project base path}/spring-boot-streaming-0.1.war`
 
-**Sample video clip: https://drive.google.com/file/d/0Bx_Rwq1Aqa7eWW1lQzJQbWhoZFk/view?usp=sharing**
-
 # Using Framework/Tools
 * spring-boot
 * jpa
