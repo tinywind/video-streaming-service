@@ -5,7 +5,7 @@ updates:
   schedule:
     interval: weekly
     day: monday
-    time: 03:00
+    time: "03:00"
     timezone: Asia/Phnom_Penh
   open-pull-requests-limit: 5
   commit-message:
