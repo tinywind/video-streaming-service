@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>SAVED DATA</title>
-    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/3.3.5/dist/css/bootstrap.css"/>"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/5.3.8/dist/css/bootstrap.css"/>"/>
     <style>
         html {
             padding: 20px;
@@ -30,7 +30,7 @@
     <c:forEach var="e" items="${postPage.content}">
         <tr style="cursor: pointer;" onclick="location.href = '/download-csv/${e.id}';">
             <td>${e.id}</td>
-            <td>${e.videoName.substring('/video-random-accessible/'.length(), e.videoName.length())}</td>
+            <td><c:out value="${e.videoName.startsWith('/video-random-accessible/') ? e.videoName.substring('/video-random-accessible/'.length()) : e.videoName}"/></td>
             <td>${e.createdAt}</td>
         </tr>
     </c:forEach>
@@ -40,6 +40,7 @@
 <hr/>
 
 <div style="text-align: center;">
+    <c:if test="${postPage.totalPages > 0}">
     <a href="/material-list?page=0"> << </a>
     <c:forEach var="num" begin="${postPage.number - 5 > 0 ? postPage.number - 5 : 0}"
                end="${postPage.number + 5 < postPage.totalPages -1 ? postPage.number + 5 : postPage.totalPages -1}">
@@ -53,6 +54,7 @@
         </c:choose>
     </c:forEach>
     <a href="/material-list?page=${postPage.totalPages - 1}"> >> </a>
+    </c:if>
 </div>
 
 </body>
