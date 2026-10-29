@@ -6,13 +6,21 @@ spring-boot, video streaming, jpa, lombok
 
 
 # How to Play: Method 1
-* Install maven3, jdk1.8
-* compile command: `$ mvn compile`
-* run command: `$ mvn spring-boot:run -Dvideo.root="{your video directory path}"`
+* Install Maven 3.9 or newer and JDK 17.
+* Build and test: `mvn verify`.
+* Run: `mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dvideo.root=/absolute/path/to/videos"`.
 
 # How to Play: Method 2
-* Install jdk1.8
-* run command: `$ java -Dvideo.root="{your video directory path}" -jar {project base path}/spring-boot-streaming-0.1.war`
+* Install JDK 17 and build the executable WAR with `mvn verify`.
+* Run: `java -Dvideo.root="/absolute/path/to/videos" -jar target/spring-boot-streaming-0.1.war`.
+
+The historical prebuilt WAR was removed because it contained obsolete dependencies. Build the replacement from source. The application uses Spring Boot 4.1.2, Jakarta JSP/JSTL, Bootstrap 5.3.8 and jQuery 3.7.1.
+
+The configured video directory must exist. Browsing, downloads and range requests resolve real paths and reject files or directory symlinks outside that directory. Downloads retain the original filename, including Unicode. Saved annotations and their CSV export keep the existing schema and keyboard controls. CSV exports prefix formula-leading or control-leading keys with an apostrophe so spreadsheets read them as text; stored annotations and ordinary custom keys stay unchanged. The H2 web console is disabled by default.
+
+The default database is `spring-boot-streaming` in the process working directory. H2 2.x cannot directly open old H2 1.4 database files. Before running this version against existing data, back up the original database, export it with the old H2 version and import it into a separate H2 2.x database using `RUNSCRIPT ... FROM_1X` as described in the [H2 migration guide](https://www.h2database.com/html/migration-to-v2.html). Verify the imported annotations before selecting that database. `NON_KEYWORDS=KEY` in the JDBC URL preserves the existing annotation `key` column; retain it when supplying a custom URL. The JPA mapping keeps the original identity columns so new annotations do not collide with imported IDs.
+
+`mvn verify` uses temporary fixture videos, a separate in-memory H2 database and loopback HTTP requests. It checks range boundaries, path and symlink confinement, JSP escaping, annotation persistence, CSV output and disabled consoles. It does not open an existing database or deploy the application. The application still has no user authentication; keep access within its intended trusted environment.
 
 # Using Framework/Tools
 * spring-boot
