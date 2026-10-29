@@ -1,14 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>DATA PROCESSING</title>
-    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/3.3.5/dist/css/bootstrap.css"/>"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/5.3.8/dist/css/bootstrap.css"/>"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap-icons/1.13.2/font/bootstrap-icons.css"/>"/>
     <style>
         html {
             padding: 20px;
+        }
+
+        #fileList.loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        #help::backdrop {
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .video-link {
@@ -119,11 +129,11 @@
 
 <hr/>
 <div class="row">
-    <div class="col-xs-6">
-        <button class="btn btn-default form-control" id="helpLink" data-href="#help"><b>KEY INSTRUCTION</b></button>
+    <div class="col-6">
+        <button class="btn btn-outline-secondary w-100" id="helpLink"><b>KEY INSTRUCTION</b></button>
     </div>
-    <div class="col-xs-6">
-        <button class="btn btn-info form-control" id="send-data"><b>SAVE TO CSV</b></button>
+    <div class="col-6">
+        <button class="btn btn-info w-100" id="send-data"><b>SAVE TO CSV</b></button>
     </div>
 </div>
 <hr/>
@@ -132,7 +142,7 @@
     <div style="position: relative; overflow: hidden;">
         <div id="playerContainer" style="position: absolute; width: 100%; top: 0; left: 0;">
             <video id="player" style="width: 100%;" autoplay="autoplay"
-                   poster="http://placehold.it/640x360"
+                   poster="<c:url value="/!resources/images/video-placeholder.svg"/>"
             <%--loop="loop"--%> <%--height="400"--%> <%--muted="muted"--%> <%--controls="controls"--%>>
             </video>
         </div>
@@ -140,28 +150,28 @@
             <div id="playerTitle"></div>
             <div id="playerComment"></div>
             <div class="progress" id="progressContainer">
-                <div id="playerProgress" class="progress-bar progress-bar-info progress-bar-striped"
+                <div id="playerProgress" class="progress-bar bg-info progress-bar-striped"
                      role="progressbar" <%--aria-valuenow="70"--%>
                      aria-valuemin="0" aria-valuemax="100" style="width:0; transition-duration: 0.1s;"></div>
             </div>
         </div>
     </div>
     <div style="text-align: center;">
-        <button id="restart" title="Restart button" class="btn glyphicon glyphicon-repeat"></button>
+        <button id="restart" title="Restart button" class="btn bi bi-arrow-counterclockwise"></button>
         &nbsp;&nbsp;&nbsp;
-        <button id="rew" title="Rewind button" class="btn glyphicon glyphicon-backward"></button>
-        <button id="play" title="Play button" class="btn glyphicon glyphicon-stop"></button>
-        <button id="fwd" title="Forward button" class="btn glyphicon glyphicon-forward"></button>
+        <button id="rew" title="Rewind button" class="btn bi bi-rewind-fill"></button>
+        <button id="play" title="Play button" class="btn bi bi-stop-fill"></button>
+        <button id="fwd" title="Forward button" class="btn bi bi-fast-forward-fill"></button>
         &nbsp;&nbsp;&nbsp;
         <button id="slower" title="Slower playback button"
-                class="btn glyphicon glyphicon-fast-backward"></button>
-        <button id="normal" title="Reset playback rate button" class="btn glyphicon glyphicon-refresh"></button>
+                class="btn bi bi-skip-backward-fill"></button>
+        <button id="normal" title="Reset playback rate button" class="btn bi bi-arrow-clockwise"></button>
         <button id="faster" title="Faster playback button"
-                class="btn glyphicon glyphicon-fast-forward"></button>
+                class="btn bi bi-skip-forward-fill"></button>
         &nbsp;&nbsp;&nbsp;
-        <button id="volDn" title="Volume down button" class="btn glyphicon glyphicon-volume-down"></button>
-        <button id="volUp" title="Volume up button" class="btn glyphicon glyphicon-volume-up"></button>
-        <button id="mute" title="Mute button" class="btn glyphicon glyphicon-volume-off"></button>
+        <button id="volDn" title="Volume down button" class="btn bi bi-volume-down-fill"></button>
+        <button id="volUp" title="Volume up button" class="btn bi bi-volume-up-fill"></button>
+        <button id="mute" title="Mute button" class="btn bi bi-volume-mute-fill"></button>
     </div>
     <br/>
 </div>
@@ -170,7 +180,7 @@
 <div id="keyLog" class="clearfix" style="width: 100%; overflow-x: auto; min-height: 1px;"></div>
 <hr/>
 
-<div id="help" style="display: none; padding: 2em; background: white; width: 30em; border-radius: 5px;">
+<dialog id="help" style="padding: 2em; background: white; width: 30em; border-radius: 5px;">
     <h2>사용방법</h2>
     <div>방향키 왼쪽: 5초 전으로</div>
     <div>방향키 오른쪽: 5초 앞으로</div>
@@ -191,14 +201,14 @@
     <div>Z: 시선 좌측 하단</div>
     <div>X: 시선 하단</div>
     <div>C: 시선 우측 하단</div>
-</div>
+    <button class="btn btn-outline-secondary" id="helpClose">Close</button>
+</dialog>
 
 <div id="scripts">
-    <script type="text/javascript" src="<c:url value="/webjars/jquery/2.1.4/dist/jquery.min.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/!resources/library/jquery.blockUI-2.70.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/!resources/js/jquery.leanModal-1.1.replace.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.min.js"/>"></script>
     <script type="text/javascript">
         var currentPath = "";
+        var currentVideoPath = "";
         var pathInfo = $("#pathInfo");
         var fileList = $("#fileList");
         var playerTitle = $("#playerTitle");
@@ -248,10 +258,10 @@
                     var button = $(e.target);
                     if (player0.paused) {
                         player0.play();
-                        button.removeClass('glyphicon-play').addClass('glyphicon-stop');
+                        button.removeClass('bi-play-fill').addClass('bi-stop-fill');
                     } else {
                         player0.pause();
-                        button.removeClass('glyphicon-stop').addClass('glyphicon-play');
+                        button.removeClass('bi-stop-fill').addClass('bi-play-fill');
                     }
                 });
 
@@ -265,10 +275,10 @@
                 document.getElementById("mute").addEventListener("click", function (e) {
                     if (player0.muted) {
                         player0.muted = false;
-                        $(e.target).addClass('glyphicon-volume-off').removeClass('glyphicon-bullhorn');
+                        $(e.target).addClass('bi-volume-mute-fill').removeClass('bi-volume-up-fill');
                     } else {
                         player0.muted = true;
-                        $(e.target).addClass('glyphicon-bullhorn').removeClass('glyphicon-volume-off');
+                        $(e.target).addClass('bi-volume-up-fill').removeClass('bi-volume-mute-fill');
                     }
                     showComment("sound " + (player0.muted ? "off" : "on"));
                 }, false);
@@ -313,15 +323,12 @@
 
         function ajaxData(url, data) {
             var deferred = $.Deferred();
-            console.log(url);
-            console.log(data);
             $.ajax({
                 url: url,
                 method: 'post',
                 data: data,
                 dataType: 'json',
                 success: function (data) {
-                    console.log(data);
                     deferred.resolve(data);
                 },
                 error: function (result) {
@@ -343,7 +350,7 @@
 
             form.append($("<input/>", {
                 name: "videoName",
-                value: player.attr("src")
+                value: currentVideoPath ? "/video-random-accessible/" + currentVideoPath : ""
             }));
 
             for (var i = 0; i < articleList.length; i++) {
@@ -356,20 +363,23 @@
                 }));
             }
 
-            console.log(form);
-            form.submit();
+            form.hide().appendTo(document.body).submit();
         });
+
+        function encodePath(path) {
+            return path.split('/').map(encodeURIComponent).join('/');
+        }
 
         function loadDirFiles(path) {
             if (path == null)
                 path = "";
-            fileList.block();
-            ajaxData("/list/" + path).done(function (data) {
+            fileList.addClass('loading').attr('aria-busy', 'true');
+            ajaxData("/list/" + encodePath(path)).done(function (data) {
                 fileList.empty();
                 currentPath = path;
                 pathInfo.text(currentPath);
                 fileList.append($("<div/>", {
-                    'class': 'video-link glyphicon dir glyphicon-folder-open',
+                    'class': 'video-link bi dir bi-folder2-open',
                     text: "<<MOVE TO THE PREVIOUS FOLDER>>",
                     click: function () {
                         if (currentPath == "" || currentPath == "/") {
@@ -380,35 +390,35 @@
                         var lastIndex = currentPath.lastIndexOf("/");
                         if (lastIndex == currentPath.length - 1)
                             lastIndex = currentPath.substr(0, currentPath.length - 1).lastIndexOf("/");
-                        console.log(currentPath.substr(0, lastIndex));
                         loadDirFiles(currentPath.substr(0, lastIndex));
                     }
                 }));
-                for (var i = 0; i < data.length; i++) {
+                data.forEach(function (entry) {
+                    var entryPath = (currentPath ? currentPath + "/" : "") + entry.fileName;
                     fileList.append($("<div/>", {
-                        'class': 'video-link glyphicon ' + (data[i].file ? 'file glyphicon-film' : 'dir glyphicon-folder-open'),
-                        text: data[i].fileName,
-                        'data-file': "" + data[i].file,
+                        'class': 'video-link bi ' + (entry.file ? 'file bi-film' : 'dir bi-folder2-open'),
+                        text: entry.fileName,
+                        'data-file': "" + entry.file,
                         click: function () {
-                            var path = (currentPath + "/" + $(this).text()).replace(/[/][/]/gi, "/");
-                            if ($(this).hasClass('file')) {
-                                player.attr('src', '/video-random-accessible/' + path);
+                            if (entry.file) {
+                                player.attr('src', '/video-random-accessible/' + encodePath(entryPath));
+                                currentVideoPath = entryPath;
                                 keyLog.empty();
                                 playerContainer.css({left: 0, top: 0});
-                                playerTitle.text(path)
+                                playerTitle.text(entryPath)
                             } else {
-                                loadDirFiles(path);
+                                loadDirFiles(entryPath);
                             }
                         }
                     }));
-                }
+                });
                 if (data.length == 0)
                     fileList.append($("<i/>", {text: "NO MP4 EXISTS"}));
-                fileList.unblock();
+                fileList.removeClass('loading').attr('aria-busy', 'false');
             }).fail(function (e) {
                 fileList.text("error[" + e.status + "]: " + e.statusText);
                 alert("FAILED TO CREATE FILE LIST");
-                fileList.unblock();
+                fileList.removeClass('loading').attr('aria-busy', 'false');
             });
         }
 
@@ -433,17 +443,24 @@
                 playerPadding.css({'padding-bottom': (ratio * 100) + '%'});
         }
 
-        $(window).load(function () {
+        $(window).on('load', function () {
             createPlayer();
-            helpLink.leanModal({closeButton: ".lean-overlay"});
+            helpLink.on('click', function () { help[0].showModal(); });
+            $("#helpClose").on('click', function () { help[0].close(); });
+            help.on('click', function (e) {
+                var bounds = help[0].getBoundingClientRect();
+                if (e.clientX < bounds.left || e.clientX > bounds.right || e.clientY < bounds.top || e.clientY > bounds.bottom) help[0].close();
+            });
             loadDirFiles();
 
             $(document).bind('keyup keydown keypress', function (e) {
+                if (help[0].open) return;
                 e.stopPropagation();
                 e.preventDefault();
             });
 
             $(document).keydown(function (e) {
+                if (help[0].open) return;
 //                console.log(e);
                 var eyeTrackingKeys = ['q', 'w', 'e', 'a', 's', 'd', 'z', 'x', 'c'];
                 var arrowKeys = ['arrowleft', 'arrowright', 'arrowup', 'arrowdown'];
