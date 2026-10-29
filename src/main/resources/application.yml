@@ -10,9 +10,10 @@ spring:
             ddl-auto: update
     h2:
         console:
-            enabled: true
+            enabled: false
     datasource:
-        url: jdbc:h2:file:./spring-boot-streaming
+        url: jdbc:h2:file:./spring-boot-streaming;NON_KEYWORDS=KEY
+        username: sa
     jackson:
         date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
         time-zone: Asia/Seoul

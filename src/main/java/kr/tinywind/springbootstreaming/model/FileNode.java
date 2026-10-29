@@ -10,5 +10,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class FileNode {
     private String fileName;
-    private boolean isFIle;
+    private boolean file;
 }
