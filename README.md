@@ -8,16 +8,17 @@ The application uses Spring Boot and a JSP interface.
 
 ## Prerequisites
 
-- JDK 17.
+- JDK 17 or newer.
 - Maven 3.9 or newer.
 - An existing directory containing MP4 videos.
+- A browser that supports the video's codecs; files are streamed without transcoding.
 
 ## Run from source
 
 From the repository directory, build and check the application:
 
 ```bash
-mvn verify
+mvn clean verify
 ```
 
 Start it with the directory you want to browse:
@@ -51,8 +52,8 @@ current application from source.
 6. Click a saved batch's row to download its CSV with `timestamp` and `key`
    columns.
 
-`KEY INSTRUCTION` opens the in-app help dialog. The implemented keyboard controls
-are listed here; apart from Space, these controls act while the video is playing.
+`KEY INSTRUCTION` opens the help dialog, which disables keyboard controls while
+open. Apart from Space, the shortcuts below act while the video is playing.
 
 | Key | Action |
 | --- | --- |
@@ -63,7 +64,7 @@ are listed here; apart from Space, these controls act while the video is playing
 | Backspace | Remove the last annotation from the current list. |
 | `+` / `-` | Increase or decrease video display width in 10% steps, with a 100% minimum. |
 | `=` | Restore the video display to 100% width and its original position. |
-| Ctrl + arrow | Move the enlarged video within the player area. |
+| Ctrl + arrow | Move the enlarged video by 5 pixels within the player area. |
 
 ## Video and data boundaries
 
@@ -93,15 +94,29 @@ H2 2.x cannot directly open old H2 1.4 database files. Before using existing dat
 retain it when supplying a custom URL. The JPA mapping keeps the original
 identity columns so new annotations do not collide with imported IDs.
 
+To use a separate database location, pass a JDBC URL when starting the WAR:
+
+```bash
+java -Dvideo.root="/absolute/path/to/videos" \
+  -jar target/spring-boot-streaming-0.1.war \
+  --spring.datasource.url="jdbc:h2:file:/absolute/path/to/data/annotations;NON_KEYWORDS=KEY"
+```
+
 ## Development and verification
 
-The application uses Spring Boot 4.1.2, JPA, H2, Lombok, Jakarta JSP/JSTL,
-Bootstrap 5.3.8 and jQuery 3.7.1. If your IDE cannot compile Lombok annotations,
-check its Lombok and annotation-processing support.
+The application keeps the Spring Boot 4.1.2 platform with JPA, Lombok and Jakarta
+JSP/JSTL. The interface uses Bootstrap 5.3.8 and jQuery 4.0.0. Stable dependency
+overrides include H2 2.5.252, Hibernate ORM 7.4.14.Final, Jackson 3.2.4, Logback
+1.6.6 and JUnit Jupiter 6.1.3. Both Jackson BOMs are aligned to keep the annotation
+API compatible; the complete versions are in [pom.xml](pom.xml).
+
+CI verifies the executable WAR on JDK 17 with Maven 3.10.0. If your IDE cannot
+compile Lombok annotations, check its Lombok and annotation-processing support.
 
 `mvn verify` uses temporary fixture videos, a separate in-memory H2 database and
 loopback HTTP requests. It checks range boundaries, path and symlink confinement,
-JSP escaping, annotation persistence, CSV output and disabled consoles. It does
+JSP escaping, referenced WebJar assets, annotation persistence, imported identity
+values, CSV output and disabled consoles. It does
 not open an existing database or deploy the application.
 
 ## Background and references

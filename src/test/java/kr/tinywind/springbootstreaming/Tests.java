@@ -30,8 +30,12 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -146,6 +150,26 @@ public class Tests {
                 String html = response.text();
                 assertTrue(html.contains("KEY INSTRUCTION"));
                 assertTrue(html.contains("SAVE TO CSV"));
+            }
+        }
+    }
+
+    @Test
+    public void servesReferencedWebAssets() throws Exception {
+        Set<String> assets = new LinkedHashSet<>();
+        Pattern references = Pattern.compile("(?:src|href)=\"(/webjars/[^\"]+)\"");
+        for (String path : new String[]{"/", "/material-list"}) {
+            try (Response response = get(path, null)) {
+                assertEquals(200, response.status);
+                Matcher matcher = references.matcher(response.text());
+                while (matcher.find()) assets.add(matcher.group(1));
+            }
+        }
+        assertFalse(assets.isEmpty());
+        for (String asset : assets) {
+            try (Response response = get(asset, null)) {
+                assertEquals(200, response.status, asset);
+                assertFalse(response.text().isEmpty(), asset);
             }
         }
     }

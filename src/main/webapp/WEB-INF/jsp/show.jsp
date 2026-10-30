@@ -205,7 +205,7 @@
 </dialog>
 
 <div id="scripts">
-    <script type="text/javascript" src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/webjars/jquery/4.0.0/dist/jquery.min.js"/>"></script>
     <script type="text/javascript">
         var currentPath = "";
         var currentVideoPath = "";
