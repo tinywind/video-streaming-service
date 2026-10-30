@@ -46,8 +46,10 @@ current application from source.
 4. While it is playing, press `Q`, `W`, `E`, `A`, `S`, `D`, `Z`, `X` or `C` to
    append a key annotation at the current playback time. Entries appear below
    the player.
-5. Click `SAVE TO CSV` to persist the current annotation batch and download a CSV
-   with `timestamp` and `key` columns.
+5. Click `SAVE TO CSV` to save the current annotation batch and open the list of
+   saved batches.
+6. Click a saved batch's row to download its CSV with `timestamp` and `key`
+   columns.
 
 `KEY INSTRUCTION` opens the in-app help dialog. The implemented keyboard controls
 are listed here; apart from Space, these controls act while the video is playing.
