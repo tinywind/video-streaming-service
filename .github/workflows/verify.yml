@@ -1,0 +1,36 @@
+name: Verify
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      JAVA_TOOL_OPTIONS: -Djava.io.tmpdir=${{ github.workspace }}/.tmp/java-tmp
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Maven 3.10.0
+        run: |
+          mkdir -p .tmp/java-tmp
+          archive=apache-maven-3.10.0-bin.tar.gz
+          base=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.10.0
+          curl -fsSL "$base/$archive" -o ".tmp/$archive"
+          curl -fsSL "$base/$archive.sha512" -o ".tmp/$archive.sha512"
+          printf '%s  %s\n' "$(cat ".tmp/$archive.sha512")" ".tmp/$archive" | sha512sum -c -
+          tar -xzf ".tmp/$archive" -C .tmp
+      - name: Test and package the committed source
+        run: |
+          mkdir -p .tmp/verification
+          git archive HEAD | tar -x -C .tmp/verification
+          .tmp/apache-maven-3.10.0/bin/mvn -B -ntp -f .tmp/verification/pom.xml -Dmaven.repo.local="$PWD/.tmp/m2" clean verify
