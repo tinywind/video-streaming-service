@@ -105,7 +105,7 @@ java -Dvideo.root="/absolute/path/to/videos" \
 ## Development and verification
 
 The application keeps the Spring Boot 4.1.2 platform with JPA, Lombok and Jakarta
-JSP/JSTL. The interface uses Bootstrap 5.3.8 and jQuery 4.0.0. Stable dependency
+JSP/JSTL. The interface uses Bootstrap 5.3.9 and jQuery 4.0.0. Stable dependency
 overrides include H2 2.5.252, Hibernate ORM 7.4.14.Final, Jackson 3.2.4, Logback
 1.6.6 and JUnit Jupiter 6.1.3. Both Jackson BOMs are aligned to keep the annotation
 API compatible; the complete versions are in [pom.xml](pom.xml).

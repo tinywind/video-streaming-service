@@ -5,8 +5,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>DATA PROCESSING</title>
-    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/5.3.8/dist/css/bootstrap.css"/>"/>
-    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap-icons/1.13.2/font/bootstrap-icons.css"/>"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/dist/css/bootstrap.css"/>"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap-icons/font/bootstrap-icons.css"/>"/>
     <style>
         html {
             padding: 20px;
@@ -205,7 +205,7 @@
 </dialog>
 
 <div id="scripts">
-    <script type="text/javascript" src="<c:url value="/webjars/jquery/4.0.0/dist/jquery.min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/webjars/jquery/dist/jquery.min.js"/>"></script>
     <script type="text/javascript">
         var currentPath = "";
         var currentVideoPath = "";

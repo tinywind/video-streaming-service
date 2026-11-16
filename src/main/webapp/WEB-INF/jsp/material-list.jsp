@@ -5,7 +5,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>SAVED DATA</title>
-    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/5.3.8/dist/css/bootstrap.css"/>"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap/dist/css/bootstrap.css"/>"/>
     <style>
         html {
             padding: 20px;
