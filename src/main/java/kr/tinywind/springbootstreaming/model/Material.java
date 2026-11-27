@@ -6,15 +6,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class Material extends AbstractPersistable<Long> {
     @Size(min = 1, max = 1024)
     @Column(nullable = false)
@@ -28,6 +28,14 @@ public class Material extends AbstractPersistable<Long> {
     @NonNull
     private Date createdAt = new Date();
 
-    @OneToMany(mappedBy = "material", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    private List<MaterialData> materialDataList = new MaterialDataList<>(this);
+    @OneToMany(mappedBy = "material", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    private List<MaterialData> materialDataList = new ArrayList<>();
+
+    public void addAnnotation(double timestamp, String key) {
+        materialDataList.add(new MaterialData(this, timestamp, key));
+    }
+
+    public List<MaterialData> getMaterialDataList() {
+        return Collections.unmodifiableList(materialDataList);
+    }
 }

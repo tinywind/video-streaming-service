@@ -3,7 +3,8 @@ package kr.tinywind.springbootstreaming.controller;
 import kr.tinywind.springbootstreaming.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.support.ExtendedServletRequestDataBinder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,6 +33,7 @@ import org.supercsv.io.CsvListWriter;
 import org.supercsv.io.ICsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -34,24 +42,26 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import static kr.tinywind.springbootstreaming.config.Constants.VIDEO_ROOT;
-
 @Controller
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
-    @Autowired
-    private MaterialRepository materialRepository;
+    private final MaterialRepository materialRepository;
+    private final Path videoRoot;
 
-    @Autowired
-    private MaterialDataRepository dataRepository;
+    public MainController(MaterialRepository materialRepository, @Value("${video.root:}") String root) throws IOException {
+        this.materialRepository = materialRepository;
+        if (root.isBlank() || !Files.isDirectory(Path.of(root))) {
+            throw new IllegalArgumentException("video.root must name an existing video directory");
+        }
+        videoRoot = Path.of(root).toRealPath();
+    }
 
     private String decodePath(HttpServletRequest request, String prefix) {
         String path = request.getRequestURI().substring(request.getContextPath().length() + prefix.length());
@@ -61,11 +71,10 @@ public class MainController {
 
     private Path resolveVideoPath(String path) {
         try {
-            Path root = Paths.get(VIDEO_ROOT).toRealPath();
-            Path requested = root.resolve(path).normalize();
-            if (!requested.startsWith(root)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            Path requested = videoRoot.resolve(path).normalize();
+            if (!requested.startsWith(videoRoot)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
             Path resolved = requested.toRealPath();
-            if (!resolved.startsWith(root)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            if (!resolved.startsWith(videoRoot)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
             return resolved;
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -136,11 +145,28 @@ public class MainController {
                 .body(new FileSystemResource(path));
     }
 
-    @RequestMapping("save")
-    public String save(Material material) {
-        if (StringUtils.hasLength(material.getVideoName()))
-//            if (material.getMaterialDataList().size() > 0)
-            materialRepository.saveAndFlush(material);
+    @InitBinder("annotationForm")
+    void bindAnnotations(ExtendedServletRequestDataBinder binder) {
+        binder.setHeaderPredicate(name -> false);
+        binder.setAllowedFields("videoName", "materialDataList[*].timestamp", "materialDataList[*].key");
+    }
+
+    @ExceptionHandler(InvalidPropertyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    void invalidFormIndex() {
+    }
+
+    @PostMapping("save")
+    public String save(@Valid @ModelAttribute AnnotationForm annotationForm, BindingResult binding) {
+        if (binding.hasErrors() || binding.getSuppressedFields().length > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        Material material = new Material(annotationForm.getVideoName());
+        for (AnnotationForm.Entry entry : annotationForm.getMaterialDataList()) {
+            material.addAnnotation(entry.getTimestamp(), entry.getKey());
+        }
+        materialRepository.saveAndFlush(material);
         return "redirect:/material-list";
     }
 
@@ -152,9 +178,8 @@ public class MainController {
 
     @RequestMapping("download-csv/{id}")
     public void downloadCSV(HttpServletResponse response, @PathVariable("id") Long id) throws IOException {
-        final Material material = materialRepository.findById(id).orElse(null);
-        if (material == null)
-            throw new IllegalArgumentException("[" + id + "] data is not exist.");
+        final Material material = materialRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         String videoName = material.getVideoName();
         int lastIndexOf = videoName.lastIndexOf("/");
@@ -167,14 +192,12 @@ public class MainController {
         String headerValue = ContentDisposition.attachment().filename(csvFileName, StandardCharsets.UTF_8).build().toString();
         response.setHeader(headerKey, headerValue);
 
-        final ICsvListWriter csvWriter = new CsvListWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-        final String[] header = {"timestamp", "key"};
-        csvWriter.writeHeader(header);
-
-        for (MaterialData data : material.getMaterialDataList())
-            csvWriter.write(data.getTimestamp(), csvLiteralKey(data.getKey()));
-
-        csvWriter.close();
+        try (ICsvListWriter csvWriter = new CsvListWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE)) {
+            csvWriter.writeHeader("timestamp", "key");
+            for (MaterialData data : material.getMaterialDataList()) {
+                csvWriter.write(data.getTimestamp(), csvLiteralKey(data.getKey()));
+            }
+        }
     }
 
     private String csvLiteralKey(String key) {

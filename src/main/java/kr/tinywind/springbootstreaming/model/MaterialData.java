@@ -2,7 +2,7 @@ package kr.tinywind.springbootstreaming.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -13,7 +13,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MaterialData extends AbstractPersistable<Long> {
