@@ -1,0 +1,31 @@
+# Orca worktree lifecycle hooks (only used when opened in Orca).
+scripts:
+  setup: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    mvn_cmd=""
+    if [[ -x ./mvnw ]]; then
+      mvn_cmd="./mvnw"
+    elif command -v mvn >/dev/null 2>&1; then
+      mvn_cmd="mvn"
+    elif [[ -n "${HOME:-}" && -d "$HOME/.m2/wrapper/dists" ]]; then
+      if sort -V </dev/null >/dev/null 2>&1; then
+        version_sort() { LC_ALL=C sort -V; }
+      else
+        version_sort() { LC_ALL=C sort; }
+      fi
+
+      mvn_cmd="$(
+        find "$HOME/.m2/wrapper/dists" -type f -path '*/apache-maven-*' -path '*/bin/mvn' -perm -100 2>/dev/null \
+          | version_sort \
+          | tail -n 1 || true
+      )"
+    fi
+
+    if [[ -z "$mvn_cmd" ]]; then
+      printf '%s\n' "Maven 3.9+ not found on PATH (install mvn or add ./mvnw)." >&2
+      exit 1
+    fi
+
+    "$mvn_cmd" -B -ntp test-compile
