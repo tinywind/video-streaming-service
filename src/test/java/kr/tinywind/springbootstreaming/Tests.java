@@ -155,7 +155,20 @@ public class Tests {
                 String html = response.text();
                 assertTrue(html.contains("KEY INSTRUCTION"));
                 assertTrue(html.contains("SAVE TO CSV"));
+                for (String hint : List.of("3초 전으로", "3초 앞으로", "0.25배씩 높이기",
+                        "0.25배씩 낮추기", "E: 시선 우측 상단")) {
+                    assertTrue(html.contains(hint), hint);
+                }
+                assertTrue(html.contains("/!resources/player-controls.mjs"));
             }
+        }
+    }
+
+    @Test
+    public void servesPlayerControlsAsJavaScript() throws Exception {
+        try (Response response = get("/!resources/player-controls.mjs", null)) {
+            assertEquals(200, response.status);
+            assertTrue(response.header("Content-Type").contains("javascript"));
         }
     }
 

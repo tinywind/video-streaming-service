@@ -182,10 +182,10 @@
 
 <dialog id="help" style="padding: 2em; background: white; width: 30em; border-radius: 5px;">
     <h2>사용방법</h2>
-    <div>방향키 왼쪽: 5초 전으로</div>
-    <div>방향키 오른쪽: 5초 앞으로</div>
-    <div>방향키 위: 재생 속도 10% 빠르게</div>
-    <div>방향키 아래: 재생 속도 10% 느리게</div>
+    <div>방향키 왼쪽: 3초 전으로</div>
+    <div>방향키 오른쪽: 3초 앞으로</div>
+    <div>방향키 위: 재생 속도 0.25배씩 높이기</div>
+    <div>방향키 아래: 재생 속도 0.25배씩 낮추기</div>
     <div>Space bar: 비디오 재생/중지</div>
     <div>backspace: 마지막 로그 삭제</div>
     <div>+: 화면 비율 확대</div>
@@ -194,7 +194,7 @@
     <div>ctrl + 방향키: 화면 중심 이동</div>
     <div>Q: 시선 좌측 상단</div>
     <div>W: 시선 상단</div>
-    <div>E: 시선 좌측 상단</div>
+    <div>E: 시선 우측 상단</div>
     <div>A: 시선 좌측</div>
     <div>S: 시선 가운데</div>
     <div>D: 시선 우측</div>
@@ -206,7 +206,8 @@
 
 <div id="scripts">
     <script type="text/javascript" src="<c:url value="/webjars/jquery/dist/jquery.min.js"/>"></script>
-    <script type="text/javascript">
+    <script type="module">
+        import { changePlaybackRate, trackProgress, zoomControl } from '<c:url value="/!resources/player-controls.mjs"/>';
         var currentPath = "";
         var currentVideoPath = "";
         var pathInfo = $("#pathInfo");
@@ -229,10 +230,8 @@
         var playerPlay = $("#play");
 
         function createPlayer() {
-            player.bind('progress', function () {
-                adjustVideoContainerRatio();
-                playerProgress.css({width: ((player0.currentTime / player0.duration) * 100) + "%"})
-            });
+            player.on('loadedmetadata resize', adjustVideoContainerRatio);
+            trackProgress(player0, playerProgress[0]);
 
             if (player0.canPlayType) {
                 playerRew.click(function (e) {
@@ -245,12 +244,12 @@
                 });
                 playerSlower.click(function (e) {
                     e.stopPropagation();
-                    player0.playbackRate -= .25;
+                    changePlaybackRate(player0, -1);
                     showComment("playbackRate: " + player0.playbackRate);
                 });
                 playerFaster.click(function (e) {
                     e.stopPropagation();
-                    player0.playbackRate += .25;
+                    changePlaybackRate(player0, 1);
                     showComment("playbackRate: " + player0.playbackRate);
                 });
                 playerPlay.click(function (e) {
@@ -317,7 +316,7 @@
 
         function showComment(text) {
             comment.text(text).removeClass('ani-blank');
-            comment[0].offsetWidth = comment[0].offsetWidth;
+            void comment[0].offsetWidth;
             comment.addClass('ani-blank');
         }
 
@@ -339,9 +338,11 @@
         }
 
         $("#send-data").click(function () {
+            if (!currentVideoPath) {
+                window.location.assign("/material-list");
+                return;
+            }
             var articleList = keyLog.find("article");
-//            if (player.attr("src") == "" || player.attr("src") == null || trList.length <= 0)
-//                return;
 
             var form = $("<form/>", {
                 action: "/save",
@@ -350,7 +351,7 @@
 
             form.append($("<input/>", {
                 name: "videoName",
-                value: currentVideoPath ? "/video-random-accessible/" + currentVideoPath : ""
+                value: "/video-random-accessible/" + currentVideoPath
             }));
 
             for (var i = 0; i < articleList.length; i++) {
@@ -434,7 +435,7 @@
             keyLog.find('article:last').remove();
         }
 
-        var videoRatio = 1;
+        const zoom = zoomControl(playerContainer[0]);
 
         function adjustVideoContainerRatio() {
             var ratio = player0.videoHeight / player0.videoWidth;
@@ -508,14 +509,8 @@
                                     playerSlower.click();
                                 }
                             }
-                        } else if (key == '+') {
-                            videoRatio += 0.1;
-                            playerContainer.css({width: videoRatio * 100 + '%'});
-                        } else if (key == '-') {
-                            videoRatio = videoRatio - 0.1 < 1 ? 1 : videoRatio - 0.1;
-                            playerContainer.css({width: videoRatio * 100 + '%'});
-                        } else if (key == '=') {
-                            playerContainer.css({left: 0, top: 0, width: '100%'});
+                        } else if (key === '+' || key === '-' || key === '=') {
+                            zoom(key);
                         } else if (key == "backspace") {
                             removeArticle();
                         }

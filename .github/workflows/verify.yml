@@ -20,6 +20,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Test player controls
+        run: node --test src/test/js/player-controls.test.mjs
       - name: Install Maven 3.10.0
         run: |
           mkdir -p .tmp/java-tmp
