@@ -2,11 +2,11 @@
 
 ## Supported Versions
 
-Security fixes are applied on `main` for the current `0.1` (`spring-boot-streaming`) application on Spring Boot `4.1.x`.
+Security fixes are applied on `main` for the current `0.1` (`spring-boot-streaming`) application. See [pom.xml](pom.xml) for the Spring Boot version.
 
 | Version | Supported |
 | ------- | --------- |
-| `main` (`0.1` / Spring Boot `4.1.x`) | Yes |
+| `main` (`0.1`) | Yes |
 | Historical commits / removed prebuilt WARs | No |
 
 Supported runtime and build environments are JDK 17+ and Maven 3.9+.
